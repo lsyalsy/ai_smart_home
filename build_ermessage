@@ -1,0 +1,302 @@
+ *  正在执行任务: C:\Users\16677\.espressif\tools\cmake\3.30.2\bin\cmake.exe -G Ninja -DPYTHON_DEPS_CHECKED=1 -DESP_PLATFORM=1 -B c:\Users\16677\Desktop\study\Aiot_Competition\ai_smart_home\build -S c:\Users\16677\Desktop\study\Aiot_Competition\ai_smart_home -DSDKCONFIG='c:\Users\16677\Desktop\study\Aiot_Competition\ai_smart_home\sdkconfig' 
+
+-- Found Git: C:/Program Files/Git/cmd/git.exe (found version "2.49.0.windows.1")
+-- Minimal build - OFF
+-- The C compiler identification is GNU 14.2.0
+-- The CXX compiler identification is GNU 14.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- git rev-parse returned 'fatal: not a git repository (or any of the parent directories): .git'
+-- Could not use 'git describe' to determine PROJECT_VER.
+-- Building ESP-IDF components for target esp32s3
+-- ESP-TEE is currently supported only on the esp32c6;esp32h2;esp32c5 SoCs
+-- Project sdkconfig file C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/sdkconfig
+-- Compiler supported targets: xtensa-esp-elf
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Found Python3: C:/Users/16677/.espressif/python_env/idf5.5_py3.11_env/Scripts/python.exe (found version "3.11.2") found components: Interpreter
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- USING O3
+-- App "ai_smart_home" version: 1
+-- Adding linker script C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/esp-idf/esp_system/ld/sections.ld.in
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.api.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.bt_funcs.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libgcc.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.wdt.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.version.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_master.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_50.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_smp.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_dtm.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_test.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_scan.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libc.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.newlib.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/soc/esp32s3/ld/esp32s3.peripherals.ld
+-- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp32-idf-sqlite3 esp_adc esp_app_format esp_bootloader_format esp_coex esp_common esp_driver_ana_cmpr esp_driver_bitscrambler esp_driver_cam esp_driver_dac esp_driver_gpio esp_driver_gptimer esp_driver_i2c esp_driver_i2s esp_driver_isp esp_driver_jpeg esp_driver_ledc esp_driver_mcpwm esp_driver_parlio esp_driver_pcnt esp_driver_ppa esp_driver_rmt esp_driver_sdio esp_driver_sdm esp_driver_sdmmc esp_driver_sdspi esp_driver_spi esp_driver_touch_sens esp_driver_tsens esp_driver_twai esp_driver_uart esp_driver_usb_serial_jtag esp_eth esp_event esp_gdbstub esp_hal_ieee802154 esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_security esp_system esp_timer esp_vfs_console esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip main mbedtls mqtt newlib nvs_flash nvs_sec_provider openthread partition_table perfmon protobuf-c protocomm pthread rt sdmmc soc spi_flash spiffs tcp_transport touch_element ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
+-- Component paths: C:/Users/16677/esp/v5.5.4/esp-idf/components/app_trace C:/Users/16677/esp/v5.5.4/esp-idf/components/app_update C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader_support C:/Users/16677/esp/v5.5.4/esp-idf/components/bt C:/Users/16677/esp/v5.5.4/esp-idf/components/cmock C:/Users/16677/esp/v5.5.4/esp-idf/components/console C:/Users/16677/esp/v5.5.4/esp-idf/components/cxx C:/Users/16677/esp/v5.5.4/esp-idf/components/driver C:/Users/16677/esp/v5.5.4/esp-idf/components/efuse C:/Users/16677/esp/v5.5.4/esp-idf/components/esp-tls C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3 C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_adc C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_app_format C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_bootloader_format C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_coex C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_common C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_ana_cmpr C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_bitscrambler C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_cam C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_dac C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_gpio C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_gptimer C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_i2c C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_i2s C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_isp C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_jpeg C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_ledc C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_mcpwm C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_parlio C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_pcnt C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_ppa C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_rmt C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_sdio C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_sdm C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_sdmmc C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_sdspi C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_spi C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_touch_sens C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_tsens C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_twai C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_uart C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_driver_usb_serial_jtag C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_eth C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_event C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_gdbstub C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_hal_ieee802154 C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_hid C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_http_client C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_http_server C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_https_ota C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_https_server C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_hw_support C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_lcd C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_local_ctrl C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_mm C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_netif C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_netif_stack C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_partition C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_phy C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_pm C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_psram C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_ringbuf C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_security C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_system C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_timer C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_vfs_console C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_wifi C:/Users/16677/esp/v5.5.4/esp-idf/components/espcoredump C:/Users/16677/esp/v5.5.4/esp-idf/components/esptool_py C:/Users/16677/esp/v5.5.4/esp-idf/components/fatfs C:/Users/16677/esp/v5.5.4/esp-idf/components/freertos C:/Users/16677/esp/v5.5.4/esp-idf/components/hal C:/Users/16677/esp/v5.5.4/esp-idf/components/heap C:/Users/16677/esp/v5.5.4/esp-idf/components/http_parser C:/Users/16677/esp/v5.5.4/esp-idf/components/idf_test C:/Users/16677/esp/v5.5.4/esp-idf/components/ieee802154 C:/Users/16677/esp/v5.5.4/esp-idf/components/json C:/Users/16677/esp/v5.5.4/esp-idf/components/log C:/Users/16677/esp/v5.5.4/esp-idf/components/lwip C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/main C:/Users/16677/esp/v5.5.4/esp-idf/components/mbedtls C:/Users/16677/esp/v5.5.4/esp-idf/components/mqtt C:/Users/16677/esp/v5.5.4/esp-idf/components/newlib C:/Users/16677/esp/v5.5.4/esp-idf/components/nvs_flash C:/Users/16677/esp/v5.5.4/esp-idf/components/nvs_sec_provider C:/Users/16677/esp/v5.5.4/esp-idf/components/openthread C:/Users/16677/esp/v5.5.4/esp-idf/components/partition_table C:/Users/16677/esp/v5.5.4/esp-idf/components/perfmon C:/Users/16677/esp/v5.5.4/esp-idf/components/protobuf-c C:/Users/16677/esp/v5.5.4/esp-idf/components/protocomm C:/Users/16677/esp/v5.5.4/esp-idf/components/pthread C:/Users/16677/esp/v5.5.4/esp-idf/components/rt C:/Users/16677/esp/v5.5.4/esp-idf/components/sdmmc C:/Users/16677/esp/v5.5.4/esp-idf/components/soc C:/Users/16677/esp/v5.5.4/esp-idf/components/spi_flash C:/Users/16677/esp/v5.5.4/esp-idf/components/spiffs C:/Users/16677/esp/v5.5.4/esp-idf/components/tcp_transport C:/Users/16677/esp/v5.5.4/esp-idf/components/touch_element C:/Users/16677/esp/v5.5.4/esp-idf/components/ulp C:/Users/16677/esp/v5.5.4/esp-idf/components/unity C:/Users/16677/esp/v5.5.4/esp-idf/components/usb C:/Users/16677/esp/v5.5.4/esp-idf/components/vfs C:/Users/16677/esp/v5.5.4/esp-idf/components/wear_levelling C:/Users/16677/esp/v5.5.4/esp-idf/components/wifi_provisioning C:/Users/16677/esp/v5.5.4/esp-idf/components/wpa_supplicant C:/Users/16677/esp/v5.5.4/esp-idf/components/xtensa
+-- Configuring done (11.7s)
+-- Generating done (2.0s)
+-- Build files have been written to: C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build
+
+ *  正在执行任务: C:\Users\16677\.espressif\tools\ninja\1.12.1\ninja.EXE  
+
+[7/1078] Generating ../../partition_table/partition-table.bin
+Partition table binary generated. Contents:
+*******************************************************************************
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,24K,
+phy_init,data,phy,0xf000,4K,
+factory,app,factory,0x10000,1M,
+*******************************************************************************
+[1067/1078] Performing configure step for 'bootloader'
+-- Found Git: C:/Program Files/Git/cmd/git.exe (found version "2.49.0.windows.1")
+-- Minimal build - OFF
+-- The C compiler identification is GNU 14.2.0
+-- The CXX compiler identification is GNU 14.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Users/16677/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32s3
+-- ESP-TEE is currently supported only on the esp32c6;esp32h2;esp32c5 SoCs
+-- Project sdkconfig file C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/sdkconfig
+-- Compiler supported targets: xtensa-esp-elf
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/soc/esp32s3/ld/esp32s3.peripherals.ld
+-- Bootloader project name: "bootloader" version: 1
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.api.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.bt_funcs.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libgcc.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.wdt.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.version.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libc.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.newlib.ld
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader/subproject/main/ld/esp32s3/bootloader.rom.ld
+-- Components: bootloader bootloader_support efuse esp_app_format esp_bootloader_format esp_common esp_hw_support esp_rom esp_security esp_system esptool_py freertos hal log main micro-ecc newlib partition_table soc spi_flash xtensa
+-- Component paths: C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader_support C:/Users/16677/esp/v5.5.4/esp-idf/components/efuse C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_app_format C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_bootloader_format C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_common C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_hw_support C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_rom C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_security C:/Users/16677/esp/v5.5.4/esp-idf/components/esp_system C:/Users/16677/esp/v5.5.4/esp-idf/components/esptool_py C:/Users/16677/esp/v5.5.4/esp-idf/components/freertos C:/Users/16677/esp/v5.5.4/esp-idf/components/hal C:/Users/16677/esp/v5.5.4/esp-idf/components/log C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader/subproject/main C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader/subproject/components/micro-ecc C:/Users/16677/esp/v5.5.4/esp-idf/components/newlib C:/Users/16677/esp/v5.5.4/esp-idf/components/partition_table C:/Users/16677/esp/v5.5.4/esp-idf/components/soc C:/Users/16677/esp/v5.5.4/esp-idf/components/spi_flash C:/Users/16677/esp/v5.5.4/esp-idf/components/xtensa
+-- Adding linker script C:/Users/16677/esp/v5.5.4/esp-idf/components/bootloader/subproject/main/ld/esp32s3/bootloader.ld
+-- Configuring done (15.2s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/bootloader
+[1068/1078] Performing build step for 'bootloader'
+[1/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/noos/util.c.obj
+[2/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/noos/log_lock.c.obj
+[3/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/log_timestamp_common.c.obj
+[4/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/noos/log_timestamp.c.obj
+[5/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/util.c.obj
+[6/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/log_print.c.obj
+[7/123] Building ASM object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_longjmp.S.obj
+[8/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/buffer/log_buffers.c.obj
+[9/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/log_format_text.c.obj
+[10/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_crc.c.obj
+[11/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_sys.c.obj
+[12/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_efuse.c.obj
+[13/123] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/src/log.c.obj
+[14/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_uart.c.obj
+[15/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_gpio.c.obj
+[16/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_systimer.c.obj
+[17/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_spiflash.c.obj
+[18/123] Building ASM object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_cache_writeback_esp32s3.S.obj
+[19/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_wdt.c.obj
+[20/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_print.c.obj
+[21/123] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_cache_esp32s2_esp32s3.c.obj
+[22/123] Building C object esp-idf/esp_common/CMakeFiles/__idf_esp_common.dir/src/esp_err_to_name.c.obj
+[23/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/cpu.c.obj
+[24/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/esp_cpu_intr.c.obj
+[25/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/esp_memory_utils.c.obj
+[26/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/cpu_region_protect.c.obj
+[27/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/rtc_clk_init.c.obj
+[28/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32s3/esp_efuse_table.c.obj
+[29/123] Linking C static library esp-idf\log\liblog.a
+[30/123] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/esp_err.c.obj
+[31/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/chip_info.c.obj
+[32/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/rtc_sleep.c.obj
+[33/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32s3/esp_efuse_rtc_calib.c.obj
+[34/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32s3/esp_efuse_fields.c.obj
+[35/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/rtc_clk.c.obj
+[36/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/rtc_init.c.obj
+[37/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32s3/esp_efuse_utility.c.obj
+[38/123] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32s3/rtc_time.c.obj
+[39/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_fields.c.obj
+[40/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_api.c.obj
+[41/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_clock_init.c.obj
+[42/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_utility.c.obj
+[43/123] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/efuse_controller/keys/with_key_purposes/esp_efuse_api_key.c.obj
+[44/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_mem.c.obj
+[45/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_random.c.obj
+[46/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_efuse.c.obj
+[47/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_random_esp32s3.c.obj
+[48/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_common.c.obj
+[49/123] Linking C static library esp-idf\esp_rom\libesp_rom.a
+[50/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_boot.c.obj
+[51/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_common_loader.c.obj
+[52/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/flash_encrypt.c.obj
+[53/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/flash_qio_mode.c.obj
+[54/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/flash_partitions.c.obj
+[55/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_clock_loader.c.obj
+[56/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_sha.c.obj
+[57/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_console_loader.c.obj
+[58/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/bootloader_flash_config_esp32s3.c.obj
+[59/123] Building C object esp-idf/esp_bootloader_format/CMakeFiles/__idf_esp_bootloader_format.dir/esp_bootloader_desc.c.obj
+[60/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/bootloader_flash.c.obj
+[61/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_console.c.obj
+[62/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/esp32s3/bootloader_soc.c.obj
+[63/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_panic.c.obj
+[64/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_init.c.obj
+[65/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/hal_utils.c.obj
+[66/123] Linking C static library esp-idf\esp_common\libesp_common.a
+[67/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/mpu_hal.c.obj
+[68/123] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_wrap.c.obj
+[69/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/esp32s3/efuse_hal.c.obj
+[70/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/lldesc.c.obj
+[71/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/esp_image_format.c.obj
+[72/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/interrupts.c.obj
+[73/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/esp32s3/bootloader_esp32s3.c.obj
+[74/123] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_utility.c.obj
+[75/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/efuse_hal.c.obj
+[76/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/adc_periph.c.obj
+[77/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/dport_access_common.c.obj
+[78/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/mmu_hal.c.obj
+[79/123] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/cache_hal.c.obj
+[80/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/dedic_gpio_periph.c.obj
+[81/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/gdma_periph.c.obj
+[82/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/uart_periph.c.obj
+[83/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/gpio_periph.c.obj
+[84/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/spi_periph.c.obj
+[85/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/i2s_periph.c.obj
+[86/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/sdm_periph.c.obj
+[87/123] Linking C static library esp-idf\esp_hw_support\libesp_hw_support.a
+[88/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/pcnt_periph.c.obj
+[89/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/rmt_periph.c.obj
+[90/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/ledc_periph.c.obj
+[91/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/temperature_sensor_periph.c.obj
+[92/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/timer_periph.c.obj
+[93/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/lcd_periph.c.obj
+[94/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/touch_sensor_periph.c.obj
+[95/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/sdmmc_periph.c.obj
+[96/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/mpi_periph.c.obj
+[97/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/twai_periph.c.obj
+[98/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/mcpwm_periph.c.obj
+[99/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/wdt_periph.c.obj
+[100/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/i2c_periph.c.obj
+[101/123] Generating project_elf_src_esp32s3.c
+[102/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/usb_dwc_periph.c.obj
+[103/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/cam_periph.c.obj
+[104/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/rtc_io_periph.c.obj
+[105/123] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32s3/power_supply_periph.c.obj
+[106/123] Building C object esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/eri.c.obj
+[107/123] Linking C static library esp-idf\esp_system\libesp_system.a
+[108/123] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/bootloader_start.c.obj
+[109/123] Building C object esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/xt_trax.c.obj
+[110/123] Building C object CMakeFiles/bootloader.elf.dir/project_elf_src_esp32s3.c.obj
+[111/123] Building C object esp-idf/micro-ecc/CMakeFiles/__idf_micro-ecc.dir/uECC_verify_antifault.c.obj
+[112/123] Linking C static library esp-idf\efuse\libefuse.a
+[113/123] Linking C static library esp-idf\bootloader_support\libbootloader_support.a
+[114/123] Linking C static library esp-idf\esp_bootloader_format\libesp_bootloader_format.a
+[115/123] Linking C static library esp-idf\spi_flash\libspi_flash.a
+[116/123] Linking C static library esp-idf\hal\libhal.a
+[117/123] Linking C static library esp-idf\micro-ecc\libmicro-ecc.a
+[118/123] Linking C static library esp-idf\soc\libsoc.a
+[119/123] Linking C static library esp-idf\xtensa\libxtensa.a
+[120/123] Linking C static library esp-idf\main\libmain.a
+[121/123] Linking C executable bootloader.elf
+[122/123] Generating binary image from built executable
+esptool.py v4.12.dev2
+Creating esp32s3 image...
+Merged 2 ELF sections
+Successfully created esp32s3 image.
+Generated C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/bootloader/bootloader.bin
+[123/123] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\16677\Desktop\study\Aiot_Competition\ai_smart_home\build\bootloader\esp-idf\esptool_py && C:\Users\16677\.espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/Users/16677/esp/v5.5.4/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5160 bytes. 0x2ea0 bytes (36%) free.
+[1071/1078] Building C object esp-idf/esp32-idf-sqlite3/CMakeFiles/__idf_esp32-idf-sqlite3.dir/sqlite3.c.obj
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'sqlite3VdbeHalt':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:20225:34: warning: statement with no effect [-Wunused-value]
+20225 | # define sqlite3VdbeCheckFk(p,i) 0
+      |                                  ^
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:78355:7: note: in expansion of macro 'sqlite3VdbeCheckFk'
+78355 |       sqlite3VdbeCheckFk(p, 0);
+      |       ^~~~~~~~~~~~~~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'sqlite3AlterFinishAddColumn':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:101398:10: warning: variable 'pTab' set but not used [-Wunused-but-set-variable]
+101398 |   Table *pTab;              /* Table being altered */
+       |          ^~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'flattenSubquery':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:1456:29: warning: statement with no effect [-Wunused-value]
+ 1456 | #define SQLITE_OK           0   /* Successful result */
+      |                             ^
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:18824:41: note: in expansion of macro 'SQLITE_OK'
+18824 | # define sqlite3AuthCheck(a,b,c,d,e)    SQLITE_OK
+      |                                         ^~~~~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:126949:17: note: in expansion of macro 'sqlite3AuthCheck'
+126949 |   TESTONLY(i =) sqlite3AuthCheck(pParse, SQLITE_SELECT, 0, 0, 0);
+       |                 ^~~~~~~~~~~~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'sqlite3Select':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:1456:29: warning: statement with no effect [-Wunused-value]
+ 1456 | #define SQLITE_OK           0   /* Successful result */
+      |                             ^
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:18824:41: note: in expansion of macro 'SQLITE_OK'
+18824 | # define sqlite3AuthCheck(a,b,c,d,e)    SQLITE_OK
+      |                                         ^~~~~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:128924:7: note: in expansion of macro 'sqlite3AuthCheck'
+128924 |       sqlite3AuthCheck(pParse, SQLITE_READ, pItem->zName, "", pItem->zDatabase);
+       |       ^~~~~~~~~~~~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'sqlite3DropTriggerPtr':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:130532:12: warning: variable 'pTable' set but not used [-Wunused-but-set-variable]
+130532 |   Table   *pTable;
+       |            ^~~~~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'sqlite3VtabBeginParse':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:133021:7: warning: variable 'iDb' set but not used [-Wunused-but-set-variable]
+133021 |   int iDb;              /* The database the table is being created in */
+       |       ^~~
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c: In function 'whereLoopAddBtree':
+C:/Users/16677/esp/v5.5.4/esp-idf/components/esp32-idf-sqlite3/sqlite3.c:141187:10: warning: variable 'rLogSize' set but not used [-Wunused-but-set-variable]
+141187 |   LogEst rLogSize;            /* Logarithm of the number of rows in the table */
+       |          ^~~~~~~~
+[1077/1078] Generating binary image from built executable
+esptool.py v4.12.dev2
+Creating esp32s3 image...
+Merged 2 ELF sections
+Successfully created esp32s3 image.
+Generated C:/Users/16677/Desktop/study/Aiot_Competition/ai_smart_home/build/ai_smart_home.bin
+[1078/1078] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\...udy/Aiot_Competition/ai_smart_home/build/ai_smart_home.bin"
+ai_smart_home.bin binary size 0x2e550 bytes. Smallest app partition is 0x100000 bytes. 0xd1ab0 bytes (82%) free.
