@@ -6,5 +6,6 @@
   "idf.portWin": "detect",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32s3"
-  }
+  },
+  "idf.currentSetup": "C:\\Users\\16677\\esp\\v5.5.4\\esp-idf"
 }
