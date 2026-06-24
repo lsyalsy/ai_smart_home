@@ -55,8 +55,14 @@ typedef struct {
     bool         alarm_enabled;
 } system_state_t;
 
-/* 渲染指定页面 */
+/* 渲染指定页面（切换页面时调用，会清屏并重绘标题栏） */
 void ui_render_page(ui_page_t page, const system_state_t *state);
+
+/* 仅刷新当前页面的数据区域（不清屏，用于传感器/状态更新） */
+void ui_update_page(const system_state_t *state);
+
+/* 获取当前页面 */
+ui_page_t ui_get_current_page(void);
 
 /* 获取页面标题 */
 const char *ui_page_title(ui_page_t page);

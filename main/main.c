@@ -159,6 +159,7 @@ void app_main(void)
                 while (new_minute >= 60) new_minute -= 60;
                 state.alarm_minute = (uint8_t)new_minute;
                 printf("EC11 alarm minute: %d\n", state.alarm_minute);
+                ui_update_page(&state);
             } else {
                 /* 顺时针下一页，逆时针上一页，循环 */
                 int16_t steps = delta;
@@ -173,15 +174,15 @@ void app_main(void)
                     steps++;
                 }
                 printf("EC11 switch to page %d\n", page);
+                ui_render_page(page, &state);
             }
-            ui_render_page(page, &state);
             continue;
         }
 
         if (ec11_button_pressed()) {
             state.alarm_enabled = !state.alarm_enabled;
             printf("EC11 alarm enabled: %d\n", state.alarm_enabled);
-            ui_render_page(page, &state);
+            ui_update_page(&state);
             continue;
         }
 
@@ -194,7 +195,7 @@ void app_main(void)
             continue;
         }
 
-        /* 定时读取传感器并刷新数据页/状态页 */
+        /* 定时读取传感器并刷新数据页/状态页（局部刷新，避免整屏闪烁） */
         if (sensor_timer >= SENSOR_UPDATE_MS) {
             sensor_timer = 0;
             read_sensors(&state);
@@ -204,7 +205,7 @@ void app_main(void)
                    state.human_present, (unsigned long)mq2_read_raw());
 
             if (page == PAGE_DATA || page == PAGE_STATUS) {
-                ui_render_page(page, &state);
+                ui_update_page(&state);
             }
         }
 
@@ -214,7 +215,7 @@ void app_main(void)
             actuator_test_step();
             update_actuator_state(&state);
             if (page == PAGE_STATUS) {
-                ui_render_page(page, &state);
+                ui_update_page(&state);
             }
         }
     }
