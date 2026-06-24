@@ -58,8 +58,10 @@ typedef struct {
 /* 渲染指定页面（切换页面时调用，会清屏并重绘标题栏） */
 void ui_render_page(ui_page_t page, const system_state_t *state);
 
-/* 仅刷新当前页面的数据区域（不清屏，用于传感器/状态更新） */
-void ui_update_page(const system_state_t *state);
+/* 仅刷新当前页面中变化的数据字段（不清屏）
+ * prev 为上一次状态，state 为当前状态；传入 NULL 时效果与 ui_update_page 相同
+ */
+void ui_update_page_state(const system_state_t *prev, const system_state_t *state);
 
 /* 获取当前页面 */
 ui_page_t ui_get_current_page(void);

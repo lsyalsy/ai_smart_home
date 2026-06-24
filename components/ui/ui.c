@@ -4,7 +4,7 @@
  *
  * 刷新策略：
  *  - ui_render_page：切换页面时调用，清屏并重绘标题栏 + 内容。
- *  - ui_update_page：同页数据变化时调用，只重绘数值/状态区域，不清屏。
+ *  - ui_update_page_state：同页数据变化时调用，只重绘变化的数据字段，不清屏。
  */
 #include "ui.h"
 #include "st7735.h"
@@ -121,29 +121,46 @@ static void page_data_render(const system_state_t *s)
     draw_label_value(y, "心率", buf, s->heart_rate > 120 ? COLOR_RED : COLOR_MAGENTA);
 }
 
-/* 数据页局部刷新（只刷新数值/状态区） */
-static void page_data_update(const system_state_t *s)
+/* 数据页按字段刷新 */
+static void page_data_update(const system_state_t *prev, const system_state_t *s)
 {
     char buf[24];
     int y = CONTENT_Y;
 
-    snprintf(buf, sizeof(buf), "%.1f C", s->temperature);
-    draw_value(y, buf, COLOR_GREEN); y += 20;
+    if (prev == NULL || prev->temperature != s->temperature) {
+        snprintf(buf, sizeof(buf), "%.1f C", s->temperature);
+        draw_value(y, buf, COLOR_GREEN);
+    }
+    y += 20;
 
-    snprintf(buf, sizeof(buf), "%.1f %%", s->humidity);
-    draw_value(y, buf, COLOR_CYAN); y += 20;
+    if (prev == NULL || prev->humidity != s->humidity) {
+        snprintf(buf, sizeof(buf), "%.1f %%", s->humidity);
+        draw_value(y, buf, COLOR_CYAN);
+    }
+    y += 20;
 
-    snprintf(buf, sizeof(buf), "%d lx", s->light_lx);
-    draw_value(y, buf, COLOR_YELLOW); y += 20;
+    if (prev == NULL || prev->light_lx != s->light_lx) {
+        snprintf(buf, sizeof(buf), "%d lx", s->light_lx);
+        draw_value(y, buf, COLOR_YELLOW);
+    }
+    y += 20;
 
-    draw_state(y, s->human_present ? "有人" : "无人",
-               s->human_present ? COLOR_GREEN : COLOR_GRAY); y += 20;
+    if (prev == NULL || prev->human_present != s->human_present) {
+        draw_state(y, s->human_present ? "有人" : "无人",
+                   s->human_present ? COLOR_GREEN : COLOR_GRAY);
+    }
+    y += 20;
 
-    draw_state(y, s->smoke_alarm ? "有" : "无",
-               s->smoke_alarm ? COLOR_RED : COLOR_GREEN); y += 20;
+    if (prev == NULL || prev->smoke_alarm != s->smoke_alarm) {
+        draw_state(y, s->smoke_alarm ? "有" : "无",
+                   s->smoke_alarm ? COLOR_RED : COLOR_GREEN);
+    }
+    y += 20;
 
-    snprintf(buf, sizeof(buf), "%d bpm", s->heart_rate);
-    draw_value(y, buf, s->heart_rate > 120 ? COLOR_RED : COLOR_MAGENTA);
+    if (prev == NULL || prev->heart_rate != s->heart_rate) {
+        snprintf(buf, sizeof(buf), "%d bpm", s->heart_rate);
+        draw_value(y, buf, s->heart_rate > 120 ? COLOR_RED : COLOR_MAGENTA);
+    }
 }
 
 /* 自动换行显示中文建议，每行最多 7 个汉字（128/16=8，留边距） */
@@ -213,28 +230,39 @@ static void page_status_render(const system_state_t *s)
                      s->alarm_triggered ? COLOR_RED : COLOR_GREEN);
 }
 
-/* 状态页局部刷新 */
-static void page_status_update(const system_state_t *s)
+/* 状态页按字段刷新 */
+static void page_status_update(const system_state_t *prev, const system_state_t *s)
 {
     int y = CONTENT_Y;
 
-    draw_state(y, s->led_on ? "打开" : "关闭",
-               s->led_on ? COLOR_YELLOW : COLOR_GRAY); y += 24;
-
-    const char *fan_str = "关闭";
-    uint16_t fan_color = COLOR_GRAY;
-    switch (s->fan_mode) {
-        case FAN_MODE_MANUAL: fan_str = "手动"; fan_color = COLOR_CYAN; break;
-        case FAN_MODE_AUTO:   fan_str = "自动"; fan_color = COLOR_GREEN; break;
-        default: break;
+    if (prev == NULL || prev->led_on != s->led_on) {
+        draw_state(y, s->led_on ? "打开" : "关闭",
+                   s->led_on ? COLOR_YELLOW : COLOR_GRAY);
     }
-    draw_state(y, fan_str, fan_color); y += 24;
+    y += 24;
 
-    draw_state(y, s->humidifier_on ? "打开" : "关闭",
-               s->humidifier_on ? COLOR_BLUE : COLOR_GRAY); y += 24;
+    if (prev == NULL || prev->fan_mode != s->fan_mode) {
+        const char *fan_str = "关闭";
+        uint16_t fan_color = COLOR_GRAY;
+        switch (s->fan_mode) {
+            case FAN_MODE_MANUAL: fan_str = "手动"; fan_color = COLOR_CYAN; break;
+            case FAN_MODE_AUTO:   fan_str = "自动"; fan_color = COLOR_GREEN; break;
+            default: break;
+        }
+        draw_state(y, fan_str, fan_color);
+    }
+    y += 24;
 
-    draw_state(y, s->alarm_triggered ? "异常" : "正常",
-               s->alarm_triggered ? COLOR_RED : COLOR_GREEN);
+    if (prev == NULL || prev->humidifier_on != s->humidifier_on) {
+        draw_state(y, s->humidifier_on ? "打开" : "关闭",
+                   s->humidifier_on ? COLOR_BLUE : COLOR_GRAY);
+    }
+    y += 24;
+
+    if (prev == NULL || prev->alarm_triggered != s->alarm_triggered) {
+        draw_state(y, s->alarm_triggered ? "异常" : "正常",
+                   s->alarm_triggered ? COLOR_RED : COLOR_GREEN);
+    }
 }
 
 /* ========== 闹钟页 ========== */
@@ -261,30 +289,39 @@ static void page_alarm_render(const system_state_t *s)
     tft_show_chn_string(4, TFT_HEIGHT - 16, "Web端可设置", COLOR_GRAY, COLOR_BLACK);
 }
 
-/* 闹钟页局部刷新 */
-static void page_alarm_update(const system_state_t *s)
+/* 闹钟页按字段刷新 */
+static void page_alarm_update(const system_state_t *prev, const system_state_t *s)
 {
     char buf[32];
     int y = CONTENT_Y;
 
-    /* 时间行：清除整行后重绘 */
-    tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
-    snprintf(buf, sizeof(buf), "时间: %02d:%02d", s->alarm_hour, s->alarm_minute);
-    tft_show_chn_string(4, y, buf, COLOR_YELLOW, COLOR_BLACK); y += 26;
-
-    /* 模式行：清除整行后重绘 */
-    tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
-    if (s->alarm_mode == ALARM_MODE_LIGHT) {
-        tft_show_chn_string(4, y, "模式: 渐变灯光", COLOR_CYAN, COLOR_BLACK);
-    } else {
-        tft_show_chn_string(4, y, "模式: 灯光蜂鸣", COLOR_CYAN, COLOR_BLACK);
+    /* 时间行 */
+    if (prev == NULL ||
+        prev->alarm_hour != s->alarm_hour ||
+        prev->alarm_minute != s->alarm_minute) {
+        tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
+        snprintf(buf, sizeof(buf), "时间: %02d:%02d", s->alarm_hour, s->alarm_minute);
+        tft_show_chn_string(4, y, buf, COLOR_YELLOW, COLOR_BLACK);
     }
     y += 26;
 
-    /* 状态行：清除整行后重绘 */
-    tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
-    snprintf(buf, sizeof(buf), "状态: %s", s->alarm_enabled ? "已开启" : "已关闭");
-    tft_show_chn_string(4, y, buf, s->alarm_enabled ? COLOR_GREEN : COLOR_GRAY, COLOR_BLACK);
+    /* 模式行 */
+    if (prev == NULL || prev->alarm_mode != s->alarm_mode) {
+        tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
+        if (s->alarm_mode == ALARM_MODE_LIGHT) {
+            tft_show_chn_string(4, y, "模式: 渐变灯光", COLOR_CYAN, COLOR_BLACK);
+        } else {
+            tft_show_chn_string(4, y, "模式: 灯光蜂鸣", COLOR_CYAN, COLOR_BLACK);
+        }
+    }
+    y += 26;
+
+    /* 状态行 */
+    if (prev == NULL || prev->alarm_enabled != s->alarm_enabled) {
+        tft_fill_rect(4, y, TFT_WIDTH - 8, 16, COLOR_BLACK);
+        snprintf(buf, sizeof(buf), "状态: %s", s->alarm_enabled ? "已开启" : "已关闭");
+        tft_show_chn_string(4, y, buf, s->alarm_enabled ? COLOR_GREEN : COLOR_GRAY, COLOR_BLACK);
+    }
 }
 
 /* 对外渲染接口：切换页面时调用 */
@@ -305,16 +342,16 @@ void ui_render_page(ui_page_t page, const system_state_t *state)
     }
 }
 
-/* 对外更新接口：同页数据变化时调用，不清屏 */
-void ui_update_page(const system_state_t *state)
+/* 对外更新接口：同页数据变化时调用，只重绘变化字段，不清屏 */
+void ui_update_page_state(const system_state_t *prev, const system_state_t *state)
 {
     if (state == NULL) return;
 
     switch (s_current_page) {
-        case PAGE_DATA:       page_data_update(state);       break;
-        case PAGE_SUGGESTION: page_suggestion_render(state); break;
-        case PAGE_STATUS:     page_status_update(state);     break;
-        case PAGE_ALARM:      page_alarm_update(state);      break;
+        case PAGE_DATA:       page_data_update(prev, state);       break;
+        case PAGE_SUGGESTION: page_suggestion_render(state);       break;
+        case PAGE_STATUS:     page_status_update(prev, state);     break;
+        case PAGE_ALARM:      page_alarm_update(prev, state);      break;
         default: break;
     }
 }

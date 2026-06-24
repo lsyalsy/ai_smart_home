@@ -25,11 +25,11 @@
 
 #define BTN_PAGE_GPIO   37   /* 页面切换按键 */
 #define BTN_PRESS_LEVEL 0
-#define BTN_POLL_MS     50
+#define BTN_POLL_MS     20    /* 主循环 20ms，编码器/按键更跟手 */
 #define BTN_DEBOUNCE_MS 200
 
-#define SENSOR_UPDATE_MS   2000   /* 每 2 秒刷新一次传感器 */
-#define ACTUATOR_TEST_MS   5000   /* 每 5 秒自动切换执行器 */
+#define SENSOR_UPDATE_MS    500   /* 每 500ms 刷新一次传感器 */
+#define ACTUATOR_TEST_MS    5000  /* 每 5 秒自动切换执行器 */
 #define MQ2_ALARM_THRESHOLD 2000  /* 烟雾报警阈值，根据实际模块调整 */
 
 static void btn_page_init(void)
@@ -94,9 +94,9 @@ static void read_sensors(system_state_t *s)
         printf("DHT22 read failed\n");
     }
 
-    s->light_lx     = bh1750_read_lux();
+    s->light_lx      = bh1750_read_lux();
     s->human_present = hcsr501_detected();
-    s->smoke_alarm  = mq2_alarm(MQ2_ALARM_THRESHOLD);
+    s->smoke_alarm   = mq2_alarm(MQ2_ALARM_THRESHOLD);
 
     /* BLE 心率（未连接/无数据时返回 0） */
     s->heart_rate = ble_hr_get_heart_rate();
@@ -104,9 +104,9 @@ static void read_sensors(system_state_t *s)
 
 static void update_actuator_state(system_state_t *s)
 {
-    s->led_on        = led_state();
-    s->fan_mode      = motor_state() ? FAN_MODE_MANUAL : FAN_MODE_OFF;
-    s->humidifier_on = relay_state();
+    s->led_on          = led_state();
+    s->fan_mode        = motor_state() ? FAN_MODE_MANUAL : FAN_MODE_OFF;
+    s->humidifier_on   = relay_state();
     s->alarm_triggered = s->smoke_alarm;
 }
 
@@ -131,6 +131,7 @@ void app_main(void)
     hardware_init();
 
     system_state_t state = {0};
+    system_state_t prev_state = {0};
     state.heart_rate = 72;
     snprintf(state.suggestion, sizeof(state.suggestion),
              "当前环境舒适，注意保持通风");
@@ -159,7 +160,7 @@ void app_main(void)
                 while (new_minute >= 60) new_minute -= 60;
                 state.alarm_minute = (uint8_t)new_minute;
                 printf("EC11 alarm minute: %d\n", state.alarm_minute);
-                ui_update_page(&state);
+                ui_update_page_state(&prev_state, &state);
             } else {
                 /* 顺时针下一页，逆时针上一页，循环 */
                 int16_t steps = delta;
@@ -182,7 +183,7 @@ void app_main(void)
         if (ec11_button_pressed()) {
             state.alarm_enabled = !state.alarm_enabled;
             printf("EC11 alarm enabled: %d\n", state.alarm_enabled);
-            ui_update_page(&state);
+            ui_update_page_state(&prev_state, &state);
             continue;
         }
 
@@ -195,9 +196,13 @@ void app_main(void)
             continue;
         }
 
-        /* 定时读取传感器并刷新数据页/状态页（局部刷新，避免整屏闪烁） */
+        /* 定时读取传感器并刷新数据页/状态页（按字段局部刷新） */
         if (sensor_timer >= SENSOR_UPDATE_MS) {
             sensor_timer = 0;
+
+            /* 保存上一次状态用于按字段刷新 */
+            prev_state = state;
+
             read_sensors(&state);
             update_actuator_state(&state);
             printf("T=%.1f H=%.1f L=%d PIR=%d MQ2=%lu\n",
@@ -205,17 +210,20 @@ void app_main(void)
                    state.human_present, (unsigned long)mq2_read_raw());
 
             if (page == PAGE_DATA || page == PAGE_STATUS) {
-                ui_update_page(&state);
+                ui_update_page_state(&prev_state, &state);
             }
         }
 
         /* 定时自动切换执行器，方便逐一测试 */
         if (actuator_timer >= ACTUATOR_TEST_MS) {
             actuator_timer = 0;
+
+            prev_state = state;
+
             actuator_test_step();
             update_actuator_state(&state);
             if (page == PAGE_STATUS) {
-                ui_update_page(&state);
+                ui_update_page_state(&prev_state, &state);
             }
         }
     }

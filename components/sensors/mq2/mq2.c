@@ -8,6 +8,7 @@
 #define MQ2_ADC_CHANNEL    ADC_CHANNEL_1  /* GPIO2 on ESP32-S3 */
 #define MQ2_ADC_ATTEN      ADC_ATTEN_DB_12
 #define MQ2_ADC_BITWIDTH   ADC_BITWIDTH_12
+#define MQ2_AVG_SAMPLES    4
 
 static adc_oneshot_unit_handle_t s_adc_handle = NULL;
 
@@ -41,8 +42,13 @@ uint32_t mq2_read_raw(void)
         return 0;
     }
 
-    ESP_ERROR_CHECK(adc_oneshot_read(s_adc_handle, MQ2_ADC_CHANNEL, &raw_value));
-    return (uint32_t)raw_value;
+    /* 滑动平均滤波：连续采样多次取平均，减少跳变 */
+    int sum = 0;
+    for (int i = 0; i < MQ2_AVG_SAMPLES; i++) {
+        ESP_ERROR_CHECK(adc_oneshot_read(s_adc_handle, MQ2_ADC_CHANNEL, &raw_value));
+        sum += raw_value;
+    }
+    return (uint32_t)(sum / MQ2_AVG_SAMPLES);
 }
 
 bool mq2_alarm(uint32_t threshold)
