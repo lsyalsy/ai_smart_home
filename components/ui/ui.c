@@ -146,13 +146,6 @@ static void page_data_update(const system_state_t *s)
     draw_value(y, buf, s->heart_rate > 120 ? COLOR_RED : COLOR_MAGENTA);
 }
 
-/* ========== 建议页 ========== */
-static void page_suggestion_render(const system_state_t *s)
-{
-    /* 建议页目前只有文本，直接重绘即可 */
-    draw_wrapped_suggestion(s->suggestion);
-}
-
 /* 自动换行显示中文建议，每行最多 7 个汉字（128/16=8，留边距） */
 static void draw_wrapped_suggestion(const char *text)
 {
@@ -187,6 +180,13 @@ static void draw_wrapped_suggestion(const char *text)
             p++;
         }
     }
+}
+
+/* ========== 建议页 ========== */
+static void page_suggestion_render(const system_state_t *s)
+{
+    /* 建议页目前只有文本，直接重绘即可 */
+    draw_wrapped_suggestion(s->suggestion);
 }
 
 /* ========== 状态页 ========== */
