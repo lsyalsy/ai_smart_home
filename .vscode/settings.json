@@ -3,9 +3,10 @@
   "idf.openOcdConfigs": [
     "board/esp32s3-builtin.cfg"
   ],
-  "idf.portWin": "detect",
+  "idf.portWin": "COM10",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32s3"
   },
-  "idf.currentSetup": "C:\\Users\\16677\\esp\\v5.5.4\\esp-idf"
+  "idf.currentSetup": "C:\\Users\\16677\\esp\\v5.5.4\\esp-idf",
+  "idf.flashType": "UART"
 }
