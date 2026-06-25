@@ -3,4 +3,5 @@ idf_component_register(SRCS "main.c"
                     REQUIRES st7735 ui driver
                              led buzzer motor relay ec11
                              hcsr501 dht22 bh1750 mq2
-                             ble)
+                             ble
+                             inmp441 voice)

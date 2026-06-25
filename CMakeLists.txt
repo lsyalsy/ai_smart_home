@@ -17,6 +17,8 @@ set(EXTRA_COMPONENT_DIRS
     components/sensors/mq2
     components/st7735
     components/ui
-    components/ble)
+    components/ble
+    components/audio/inmp441
+    components/voice)
 
 project(ai_smart_home)
