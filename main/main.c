@@ -209,13 +209,19 @@ static void task_rules(void *pvParameter)
 
         xSemaphoreTake(g_state_mutex, portMAX_DELAY);
 
-        /* 规则1：温度 > 28℃ 开风扇 */
-        if (g_state.temperature > 28.0f) {
-            motor_on();
-            g_state.fan_mode = FAN_MODE_AUTO;
-        } else {
-            motor_off();
-            g_state.fan_mode = FAN_MODE_OFF;
+        /* 规则1：自动模式下根据温度计算风扇档位
+         * 温度 <= 28℃ 时关闭；>28℃ 后每升高 1℃ 增加一档，最高 20 档
+         */
+        if (g_state.fan_mode == FAN_MODE_AUTO) {
+            float temp = g_state.temperature;
+            uint8_t level = 0;
+            if (temp > 28.0f) {
+                level = (uint8_t)((temp - 28.0f) + 0.5f);
+                if (level < 1) level = 1;
+                if (level > MOTOR_SPEED_MAX_LEVEL) level = MOTOR_SPEED_MAX_LEVEL;
+            }
+            motor_set_speed(level);
+            g_state.fan_speed_level = level;
         }
 
         /* 规则2：湿度 < 40% 开加湿器（继电器）
@@ -303,46 +309,38 @@ static void handle_input_event(const input_event_t *ev, system_state_t *local_pr
 
     switch (ev->type) {
         case INPUT_ENCODER_DELTA:
-            if (page == PAGE_ALARM) {
-                int16_t new_minute = (int16_t)current.alarm_minute + ev->value;
-                while (new_minute < 0) new_minute += 60;
-                while (new_minute >= 60) new_minute -= 60;
-                current.alarm_minute = (uint8_t)new_minute;
-                g_state.alarm_minute = current.alarm_minute;
+            /* EC11 旋转专职风扇调速（20 档，5% 步进） */
+            {
+                int16_t new_level = (int16_t)current.fan_speed_level + ev->value;
+                if (new_level < 0) new_level = 0;
+                if (new_level > MOTOR_SPEED_MAX_LEVEL) new_level = MOTOR_SPEED_MAX_LEVEL;
+                current.fan_speed_level = (uint8_t)new_level;
+                current.fan_mode = FAN_MODE_MANUAL;
+                g_state.fan_speed_level = current.fan_speed_level;
+                g_state.fan_mode = FAN_MODE_MANUAL;
+                motor_set_speed(current.fan_speed_level);
 
                 xSemaphoreGive(g_state_mutex);
                 ui_update_page_state(local_prev, &current);
                 *local_prev = current;
-                ESP_LOGI(TAG, "EC11 alarm minute: %d", current.alarm_minute);
-                return; /* 已释放 mutex */
-            } else {
-                int16_t steps = ev->value;
-                while (steps > 0) {
-                    page++;
-                    if (page >= PAGE_MAX) page = PAGE_DATA;
-                    steps--;
-                }
-                while (steps < 0) {
-                    if (page == PAGE_DATA) page = PAGE_MAX - 1;
-                    else page--;
-                    steps++;
-                }
-
-                xSemaphoreGive(g_state_mutex);
-                ui_render_page(page, &current);
-                *local_prev = current;
-                ESP_LOGI(TAG, "EC11 switch to page %d", page);
-                return; /* 已释放 mutex */
+                ESP_LOGI(TAG, "EC11 fan speed: level=%d", current.fan_speed_level);
+                return;
             }
 
         case INPUT_ENCODER_BTN:
-            current.alarm_enabled = !current.alarm_enabled;
-            g_state.alarm_enabled = current.alarm_enabled;
+            /* EC11 按键专职风扇开关 */
+            motor_toggle();
+            current.fan_speed_level = motor_get_speed();
+            current.fan_mode = (current.fan_speed_level > 0) ? FAN_MODE_MANUAL : FAN_MODE_OFF;
+            g_state.fan_speed_level = current.fan_speed_level;
+            g_state.fan_mode = current.fan_mode;
 
             xSemaphoreGive(g_state_mutex);
             ui_update_page_state(local_prev, &current);
             *local_prev = current;
-            ESP_LOGI(TAG, "EC11 alarm enabled: %d", current.alarm_enabled);
+            ESP_LOGI(TAG, "EC11 fan toggle: %s, level=%d",
+                     current.fan_speed_level > 0 ? "on" : "off",
+                     current.fan_speed_level);
             return;
 
         case INPUT_GPIO37_BTN:

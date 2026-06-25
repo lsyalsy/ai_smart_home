@@ -214,12 +214,23 @@ static void page_status_render(const system_state_t *s)
     draw_label_state(y, "灯光", s->led_on ? "打开" : "关闭",
                      s->led_on ? COLOR_YELLOW : COLOR_GRAY); y += 24;
 
-    const char *fan_str = "关闭";
+    char fan_buf[24];
+    const char *fan_str = fan_buf;
     uint16_t fan_color = COLOR_GRAY;
     switch (s->fan_mode) {
-        case FAN_MODE_MANUAL: fan_str = "手动"; fan_color = COLOR_CYAN; break;
-        case FAN_MODE_AUTO:   fan_str = "自动"; fan_color = COLOR_GREEN; break;
-        default: break;
+        case FAN_MODE_MANUAL:
+            snprintf(fan_buf, sizeof(fan_buf), "手动 L%d(%d%%)",
+                     s->fan_speed_level, s->fan_speed_level * 5);
+            fan_color = COLOR_CYAN;
+            break;
+        case FAN_MODE_AUTO:
+            snprintf(fan_buf, sizeof(fan_buf), "自动 L%d(%d%%)",
+                     s->fan_speed_level, s->fan_speed_level * 5);
+            fan_color = COLOR_GREEN;
+            break;
+        default:
+            fan_str = "关闭";
+            break;
     }
     draw_label_state(y, "风扇", fan_str, fan_color); y += 24;
 
@@ -241,13 +252,24 @@ static void page_status_update(const system_state_t *prev, const system_state_t 
     }
     y += 24;
 
-    if (prev == NULL || prev->fan_mode != s->fan_mode) {
-        const char *fan_str = "关闭";
+    if (prev == NULL || prev->fan_mode != s->fan_mode || prev->fan_speed_level != s->fan_speed_level) {
+        char fan_buf[24];
+        const char *fan_str = fan_buf;
         uint16_t fan_color = COLOR_GRAY;
         switch (s->fan_mode) {
-            case FAN_MODE_MANUAL: fan_str = "手动"; fan_color = COLOR_CYAN; break;
-            case FAN_MODE_AUTO:   fan_str = "自动"; fan_color = COLOR_GREEN; break;
-            default: break;
+            case FAN_MODE_MANUAL:
+                snprintf(fan_buf, sizeof(fan_buf), "手动 L%d(%d%%)",
+                         s->fan_speed_level, s->fan_speed_level * 5);
+                fan_color = COLOR_CYAN;
+                break;
+            case FAN_MODE_AUTO:
+                snprintf(fan_buf, sizeof(fan_buf), "自动 L%d(%d%%)",
+                         s->fan_speed_level, s->fan_speed_level * 5);
+                fan_color = COLOR_GREEN;
+                break;
+            default:
+                fan_str = "关闭";
+                break;
         }
         draw_state(y, fan_str, fan_color);
     }

@@ -43,10 +43,11 @@ typedef struct {
     char suggestion[96];
 
     /* 执行器状态 */
-    bool led_on;          /* 灯光 */
-    fan_mode_t fan_mode;  /* 风扇 */
-    bool humidifier_on;   /* 加湿器 */
-    bool alarm_triggered; /* 报警器 */
+    bool       led_on;          /* 灯光 */
+    fan_mode_t fan_mode;        /* 风扇模式 */
+    uint8_t    fan_speed_level; /* 风扇档位 0~20（仅在手动/自动模式有效） */
+    bool       humidifier_on;   /* 加湿器 */
+    bool       alarm_triggered; /* 报警器 */
 
     /* 光闹钟 */
     uint8_t      alarm_hour;
