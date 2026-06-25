@@ -33,6 +33,8 @@
 #include "mq2.h"
 #include "ble_hr.h"
 
+#include "state.h"
+
 #include "voice.h"
 
 #define TAG "APP"
@@ -137,6 +139,9 @@ static void app_hardware_init(void)
     /* BLE 心率采集 */
     ble_hr_init();
 
+    /* 本地规则引擎（佩戴/睡眠/心率异常） */
+    rules_state_init();
+
     /* 语音（含 INMP441） */
     if (!voice_init()) {
         ESP_LOGE(TAG, "Voice init failed, voice task will be disabled");
@@ -180,12 +185,14 @@ static void task_sensor(void *pvParameter)
 
         xSemaphoreTake(g_state_mutex, portMAX_DELAY);
         read_sensors(&g_state);
+        rules_state_update(&g_state);
         xSemaphoreGive(g_state_mutex);
 
-        ESP_LOGI(TAG, "Sensor T=%.1f H=%.1f L=%d PIR=%d MQ2=%lu HR=%u",
+        ESP_LOGI(TAG, "Sensor T=%.1f H=%.1f L=%d PIR=%d MQ2=%lu HR=%u WEAR=%d SLEEP=%d HR_AB=%d",
                  g_state.temperature, g_state.humidity, g_state.light_lx,
                  g_state.human_present, (unsigned long)mq2_read_raw(),
-                 g_state.heart_rate);
+                 g_state.heart_rate,
+                 g_state.wearing, g_state.sleeping, g_state.hr_abnormal);
 
         display_event_t ev = {
             .type = DISPLAY_REFRESH,
@@ -237,7 +244,13 @@ static void task_rules(void *pvParameter)
             g_state.humidifier_on = false;
         }
 
-        /* 规则3：烟雾报警 -> 蜂鸣器 + LED + 继电器 */
+        /* 规则3：检测到睡眠 -> 自动关闭灯光 */
+        if (g_state.sleeping) {
+            led_off();
+            g_state.led_on = false;
+        }
+
+        /* 规则4：烟雾报警 -> 蜂鸣器 + LED + 继电器 */
         if (g_state.smoke_alarm) {
             buzzer_on();
             led_on();
@@ -246,8 +259,15 @@ static void task_rules(void *pvParameter)
         } else {
             buzzer_off();
             g_state.alarm_triggered = false;
-            /* LED 状态在非报警时由其他逻辑决定，这里同步硬件状态 */
-            g_state.led_on = led_state();
+            /* 非报警且非睡眠时，同步 LED 硬件状态 */
+            if (!g_state.sleeping) {
+                g_state.led_on = led_state();
+            }
+        }
+
+        /* 规则5：心率异常 -> 日志记录（可作为后续微信推送/蜂鸣器联动入口） */
+        if (g_state.hr_abnormal) {
+            ESP_LOGW(TAG, "HR abnormal detected: hr=%u", g_state.heart_rate);
         }
 
         xSemaphoreGive(g_state_mutex);

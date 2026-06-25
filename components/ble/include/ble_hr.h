@@ -1,6 +1,7 @@
 #ifndef BLE_HR_H
 #define BLE_HR_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -19,6 +20,11 @@ void ble_hr_init(void);
  * 若未连接或尚未收到数据，返回 0。
  */
 uint8_t ble_hr_get_heart_rate(void);
+
+/**
+ * 判断当前是否已连接到心率设备。
+ */
+bool ble_hr_is_connected(void);
 
 #ifdef __cplusplus
 }

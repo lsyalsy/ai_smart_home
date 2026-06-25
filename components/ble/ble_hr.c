@@ -81,6 +81,11 @@ uint8_t ble_hr_get_heart_rate(void)
     return hr;
 }
 
+bool ble_hr_is_connected(void)
+{
+    return s_connected;
+}
+
 /* 开始扫描广播了心率服务的设备 */
 static void ble_hr_scan(void)
 {

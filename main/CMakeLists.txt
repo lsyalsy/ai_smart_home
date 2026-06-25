@@ -4,4 +4,5 @@ idf_component_register(SRCS "main.c"
                              led buzzer motor relay ec11
                              hcsr501 dht22 bh1750 mq2
                              ble
+                             state
                              inmp441 voice)

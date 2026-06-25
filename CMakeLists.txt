@@ -19,6 +19,7 @@ set(EXTRA_COMPONENT_DIRS
     components/ui
     components/ble
     components/audio/inmp441
-    components/voice)
+    components/voice
+    components/rules/state)
 
 project(ai_smart_home)

@@ -39,6 +39,11 @@ typedef struct {
     bool     smoke_alarm;   /* 烟雾报警 */
     uint8_t  heart_rate;    /* 心率 bpm */
 
+    /* 规则引擎判断出的状态 */
+    bool     wearing;       /* 是否佩戴手环 */
+    bool     sleeping;      /* 是否处于睡眠状态 */
+    bool     hr_abnormal;   /* 心率是否异常 */
+
     /* 大模型建议 */
     char suggestion[96];
 

@@ -212,7 +212,7 @@ static void page_status_render(const system_state_t *s)
     int y = CONTENT_Y;
 
     draw_label_state(y, "灯光", s->led_on ? "打开" : "关闭",
-                     s->led_on ? COLOR_YELLOW : COLOR_GRAY); y += 24;
+                     s->led_on ? COLOR_YELLOW : COLOR_GRAY); y += 20;
 
     char fan_buf[24];
     const char *fan_str = fan_buf;
@@ -232,13 +232,22 @@ static void page_status_render(const system_state_t *s)
             fan_str = "关闭";
             break;
     }
-    draw_label_state(y, "风扇", fan_str, fan_color); y += 24;
+    draw_label_state(y, "风扇", fan_str, fan_color); y += 20;
 
     draw_label_state(y, "加湿器", s->humidifier_on ? "打开" : "关闭",
-                     s->humidifier_on ? COLOR_BLUE : COLOR_GRAY); y += 24;
+                     s->humidifier_on ? COLOR_BLUE : COLOR_GRAY); y += 20;
 
     draw_label_state(y, "报警", s->alarm_triggered ? "异常" : "正常",
-                     s->alarm_triggered ? COLOR_RED : COLOR_GREEN);
+                     s->alarm_triggered ? COLOR_RED : COLOR_GREEN); y += 20;
+
+    draw_label_state(y, "佩戴", s->wearing ? "是" : "否",
+                     s->wearing ? COLOR_GREEN : COLOR_GRAY); y += 20;
+
+    draw_label_state(y, "睡眠", s->sleeping ? "是" : "否",
+                     s->sleeping ? COLOR_MAGENTA : COLOR_GRAY); y += 20;
+
+    draw_label_state(y, "心率", s->hr_abnormal ? "异常" : "正常",
+                     s->hr_abnormal ? COLOR_RED : COLOR_GREEN);
 }
 
 /* 状态页按字段刷新 */
@@ -250,7 +259,7 @@ static void page_status_update(const system_state_t *prev, const system_state_t 
         draw_state(y, s->led_on ? "打开" : "关闭",
                    s->led_on ? COLOR_YELLOW : COLOR_GRAY);
     }
-    y += 24;
+    y += 20;
 
     if (prev == NULL || prev->fan_mode != s->fan_mode || prev->fan_speed_level != s->fan_speed_level) {
         char fan_buf[24];
@@ -273,17 +282,35 @@ static void page_status_update(const system_state_t *prev, const system_state_t 
         }
         draw_state(y, fan_str, fan_color);
     }
-    y += 24;
+    y += 20;
 
     if (prev == NULL || prev->humidifier_on != s->humidifier_on) {
         draw_state(y, s->humidifier_on ? "打开" : "关闭",
                    s->humidifier_on ? COLOR_BLUE : COLOR_GRAY);
     }
-    y += 24;
+    y += 20;
 
     if (prev == NULL || prev->alarm_triggered != s->alarm_triggered) {
         draw_state(y, s->alarm_triggered ? "异常" : "正常",
                    s->alarm_triggered ? COLOR_RED : COLOR_GREEN);
+    }
+    y += 20;
+
+    if (prev == NULL || prev->wearing != s->wearing) {
+        draw_state(y, s->wearing ? "是" : "否",
+                   s->wearing ? COLOR_GREEN : COLOR_GRAY);
+    }
+    y += 20;
+
+    if (prev == NULL || prev->sleeping != s->sleeping) {
+        draw_state(y, s->sleeping ? "是" : "否",
+                   s->sleeping ? COLOR_MAGENTA : COLOR_GRAY);
+    }
+    y += 20;
+
+    if (prev == NULL || prev->hr_abnormal != s->hr_abnormal) {
+        draw_state(y, s->hr_abnormal ? "异常" : "正常",
+                   s->hr_abnormal ? COLOR_RED : COLOR_GREEN);
     }
 }
 
