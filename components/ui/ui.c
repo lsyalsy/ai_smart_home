@@ -237,6 +237,9 @@ static void page_status_render(const system_state_t *s)
     draw_label_state(y, "加湿器", s->humidifier_on ? "打开" : "关闭",
                      s->humidifier_on ? COLOR_BLUE : COLOR_GRAY); y += 20;
 
+    draw_label_state(y, "换气扇", s->bathroom_fan_on ? "打开" : "关闭",
+                     s->bathroom_fan_on ? COLOR_BLUE : COLOR_GRAY); y += 20;
+
     draw_label_state(y, "报警", s->alarm_triggered ? "异常" : "正常",
                      s->alarm_triggered ? COLOR_RED : COLOR_GREEN); y += 20;
 
@@ -287,6 +290,12 @@ static void page_status_update(const system_state_t *prev, const system_state_t 
     if (prev == NULL || prev->humidifier_on != s->humidifier_on) {
         draw_state(y, s->humidifier_on ? "打开" : "关闭",
                    s->humidifier_on ? COLOR_BLUE : COLOR_GRAY);
+    }
+    y += 20;
+
+    if (prev == NULL || prev->bathroom_fan_on != s->bathroom_fan_on) {
+        draw_state(y, s->bathroom_fan_on ? "打开" : "关闭",
+                   s->bathroom_fan_on ? COLOR_BLUE : COLOR_GRAY);
     }
     y += 20;
 

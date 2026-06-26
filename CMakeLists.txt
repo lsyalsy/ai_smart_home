@@ -14,7 +14,9 @@ set(EXTRA_COMPONENT_DIRS
     components/sensors/bh1750
     components/sensors/dht22
     components/sensors/hcsr501
+    components/sensors/bathroom_pir
     components/sensors/mq2
+    components/notify
     components/st7735
     components/ui
     components/ble

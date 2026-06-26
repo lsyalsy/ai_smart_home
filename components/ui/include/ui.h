@@ -35,9 +35,10 @@ typedef struct {
     float    temperature;   /* 温度 ℃ */
     float    humidity;      /* 湿度 % */
     uint16_t light_lx;      /* 光照 lux */
-    bool     human_present; /* 人体存在 */
-    bool     smoke_alarm;   /* 烟雾报警 */
-    uint8_t  heart_rate;    /* 心率 bpm */
+    bool     human_present;   /* 人体存在 */
+    bool     bathroom_pir;    /* 卫生间人体存在 */
+    bool     smoke_alarm;     /* 烟雾报警 */
+    uint8_t  heart_rate;      /* 心率 bpm */
 
     /* 规则引擎判断出的状态 */
     bool     wearing;       /* 是否佩戴手环 */
@@ -48,11 +49,12 @@ typedef struct {
     char suggestion[96];
 
     /* 执行器状态 */
-    bool       led_on;          /* 灯光 */
-    fan_mode_t fan_mode;        /* 风扇模式 */
-    uint8_t    fan_speed_level; /* 风扇档位 0~20（仅在手动/自动模式有效） */
-    bool       humidifier_on;   /* 加湿器 */
-    bool       alarm_triggered; /* 报警器 */
+    bool       led_on;           /* 灯光 */
+    fan_mode_t fan_mode;         /* 风扇模式 */
+    uint8_t    fan_speed_level;  /* 风扇档位 0~20（仅在手动/自动模式有效） */
+    bool       humidifier_on;    /* 加湿器 */
+    bool       bathroom_fan_on;  /* 卫生间换气扇 */
+    bool       alarm_triggered;  /* 报警器 */
 
     /* 光闹钟 */
     uint8_t      alarm_hour;

@@ -17,6 +17,7 @@
 #include "freertos/queue.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 
 #include "st7735.h"
 #include "ui.h"
@@ -28,12 +29,14 @@
 #include "ec11.h"
 
 #include "hcsr501.h"
+#include "bathroom_pir.h"
 #include "dht22.h"
 #include "bh1750.h"
 #include "mq2.h"
 #include "ble_hr.h"
 
 #include "state.h"
+#include "notify.h"
 
 #include "voice.h"
 
@@ -50,6 +53,11 @@
 #define VOICE_PERIOD_MS     100
 
 #define MQ2_ALARM_THRESHOLD 2000  /* 烟雾报警阈值 */
+
+/* T20 自动联动延时参数 */
+#define NO_PERSON_TIMEOUT_MS        300000  /* 5 分钟无人关闭所有设备 */
+#define BATHROOM_FAN_DELAY_MS       300000  /* 卫生间人走 5 分钟后关换气扇 */
+#define SMOKE_NOTIFY_COOLDOWN_MS    300000  /* 烟雾报警微信推送 5 分钟冷却 */
 
 /* ========== 全局状态与同步原语 ========== */
 system_state_t    g_state      = {0};
@@ -132,6 +140,11 @@ static void app_hardware_init(void)
 
     /* 传感器 */
     hcsr501_init();
+    bathroom_pir_init();
+
+    /* 微信推送（Server酱），key 可在 menuconfig 或代码里配置 */
+    notify_init("");
+
     dht22_init();
     bh1750_init();
     mq2_init();
@@ -163,6 +176,7 @@ static void read_sensors(system_state_t *s)
 
     s->light_lx      = bh1750_read_lux();
     s->human_present = hcsr501_detected();
+    s->bathroom_pir  = bathroom_pir_detected();
     s->smoke_alarm   = mq2_alarm(MQ2_ALARM_THRESHOLD);
 
     /* BLE 心率（未连接/无数据时返回 0） */
@@ -211,28 +225,43 @@ static void task_rules(void *pvParameter)
     const TickType_t period = pdMS_TO_TICKS(RULES_PERIOD_MS);
     TickType_t last_wake = xTaskGetTickCount();
 
+    /* 联动计时状态 */
+    static int64_t no_person_start_us     = 0;
+    static bool    bathroom_fan_on        = false;
+    static int64_t bathroom_leave_start_us = 0;
+    static int64_t last_smoke_notify_us   = 0;
+    static bool    smoke_notified         = false;
+
     while (1) {
         vTaskDelayUntil(&last_wake, period);
 
         xSemaphoreTake(g_state_mutex, portMAX_DELAY);
+        int64_t now = esp_timer_get_time();
 
-        /* 规则1：自动模式下根据温度计算风扇档位
-         * 温度 <= 28℃ 时关闭；>28℃ 后每升高 1℃ 增加一档，最高 20 档
-         */
+        /* 规则1：自动模式下根据温度和心率计算风扇档位，取较大值 */
         if (g_state.fan_mode == FAN_MODE_AUTO) {
             float temp = g_state.temperature;
-            uint8_t level = 0;
+            uint8_t temp_level = 0;
             if (temp > 28.0f) {
-                level = (uint8_t)((temp - 28.0f) + 0.5f);
-                if (level < 1) level = 1;
-                if (level > MOTOR_SPEED_MAX_LEVEL) level = MOTOR_SPEED_MAX_LEVEL;
+                temp_level = (uint8_t)((temp - 28.0f) + 0.5f);
+                if (temp_level < 1) temp_level = 1;
+                if (temp_level > MOTOR_SPEED_MAX_LEVEL) temp_level = MOTOR_SPEED_MAX_LEVEL;
             }
+
+            uint8_t hr_level = 0;
+            uint8_t hr = g_state.heart_rate;
+            if (hr > 100) {
+                hr_level = (uint8_t)((hr - 100) / 2 + 1);
+                if (hr_level < 1) hr_level = 1;
+                if (hr_level > MOTOR_SPEED_MAX_LEVEL / 2) hr_level = MOTOR_SPEED_MAX_LEVEL / 2;
+            }
+
+            uint8_t level = (temp_level > hr_level) ? temp_level : hr_level;
             motor_set_speed(level);
             g_state.fan_speed_level = level;
         }
 
-        /* 规则2：湿度 < 40% 开加湿器（继电器）
-         * 烟雾报警时强制继电器打开，优先级更高 */
+        /* 规则2：湿度 < 40% 开加湿器；烟雾报警时强制打开加湿器 */
         if (g_state.smoke_alarm) {
             relay_on();
             g_state.humidifier_on = true;
@@ -250,22 +279,74 @@ static void task_rules(void *pvParameter)
             g_state.led_on = false;
         }
 
-        /* 规则4：烟雾报警 -> 蜂鸣器 + LED + 继电器 */
+        /* 规则4：无人自动关闭所有设备（5 分钟延时） */
+        if (!g_state.human_present) {
+            if (no_person_start_us == 0) {
+                no_person_start_us = now;
+            }
+            int64_t elapsed_ms = (now - no_person_start_us) / 1000;
+            if (elapsed_ms >= NO_PERSON_TIMEOUT_MS) {
+                led_off();
+                motor_off();
+                relay_set(RELAY_CHANNEL_HUMIDIFIER, false);
+                relay_set(RELAY_CHANNEL_BATHROOM, false);
+                g_state.led_on = false;
+                g_state.fan_mode = FAN_MODE_OFF;
+                g_state.fan_speed_level = 0;
+                g_state.humidifier_on = false;
+                g_state.bathroom_fan_on = false;
+                bathroom_fan_on = false;
+                ESP_LOGI(TAG, "no person for %d ms, turn off all devices", NO_PERSON_TIMEOUT_MS);
+            }
+        } else {
+            no_person_start_us = 0;
+        }
+
+        /* 规则5：卫生间换气扇延时控制（检测到人体开启，人走 5 分钟后关闭） */
+        if (g_state.bathroom_pir) {
+            bathroom_fan_on = true;
+            bathroom_leave_start_us = 0;
+            relay_set(RELAY_CHANNEL_BATHROOM, true);
+        } else if (bathroom_fan_on) {
+            if (bathroom_leave_start_us == 0) {
+                bathroom_leave_start_us = now;
+            }
+            int64_t elapsed_ms = (now - bathroom_leave_start_us) / 1000;
+            if (elapsed_ms >= BATHROOM_FAN_DELAY_MS) {
+                relay_set(RELAY_CHANNEL_BATHROOM, false);
+                bathroom_fan_on = false;
+                bathroom_leave_start_us = 0;
+            }
+        }
+        g_state.bathroom_fan_on = bathroom_fan_on;
+
+        /* 规则6：烟雾报警 -> 蜂鸣器 + LED + 继电器 + 条件微信推送 */
         if (g_state.smoke_alarm) {
             buzzer_on();
             led_on();
             g_state.alarm_triggered = true;
             g_state.led_on = true;
+
+            if (g_state.human_present) {
+                int64_t elapsed_ms = (now - last_smoke_notify_us) / 1000;
+                if (!smoke_notified || elapsed_ms >= SMOKE_NOTIFY_COOLDOWN_MS) {
+                    if (notify_send("AI智能管家烟雾报警",
+                                    "检测到房间有烟雾，可能为失火或有人抽烟，请尽快检查。")) {
+                        last_smoke_notify_us = now;
+                        smoke_notified = true;
+                    }
+                }
+            }
         } else {
             buzzer_off();
             g_state.alarm_triggered = false;
-            /* 非报警且非睡眠时，同步 LED 硬件状态 */
+            smoke_notified = false;
             if (!g_state.sleeping) {
                 g_state.led_on = led_state();
             }
         }
 
-        /* 规则5：心率异常 -> 日志记录（可作为后续微信推送/蜂鸣器联动入口） */
+        /* 规则7：心率异常 -> 日志记录 */
         if (g_state.hr_abnormal) {
             ESP_LOGW(TAG, "HR abnormal detected: hr=%u", g_state.heart_rate);
         }
