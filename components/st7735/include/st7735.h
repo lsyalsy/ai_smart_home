@@ -15,22 +15,22 @@
  *
  * TFT 模块引脚    ESP32-S3 引脚
  * --------------  -------------
- * VCC             3.3V
+ * VDD             3.3V
  * GND             GND
- * SCL (SCK/CLK)   GPIO1
- * SDA (MOSI/DIN)  GPIO7
- * CS              GPIO20
+ * SCL (SCK/CLK)   GPIO12
+ * SDA (MOSI/DIN)  GPIO11
+ * CS              GPIO45
  * DC (RS)         GPIO21
- * RST             GPIO47
- * BL (背光)       接 3.3V 常亮
+ * RES             GPIO47
+ * BL              GPIO46
  */
 
-#define TFT_SCK_GPIO    1
-#define TFT_MOSI_GPIO   7
-#define TFT_CS_GPIO     20
+#define TFT_SCK_GPIO    12
+#define TFT_MOSI_GPIO   11
+#define TFT_CS_GPIO     45
 #define TFT_DC_GPIO     21
 #define TFT_RST_GPIO    47
-#define TFT_BL_GPIO     45  /* 背光由硬件接 3.3V，此 GPIO 仅占位 */
+#define TFT_BL_GPIO     46
 
 #define TFT_WIDTH       128
 #define TFT_HEIGHT      160

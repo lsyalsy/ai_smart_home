@@ -5,7 +5,7 @@
 #include "esp_rom_sys.h"
 #include "dht22.h"
 
-#define DHT22_GPIO_NUM      GPIO_NUM_3
+#define DHT22_GPIO_NUM      GPIO_NUM_4
 #define DHT22_TIMEOUT_US    100
 
 static portMUX_TYPE s_dht22_mux = portMUX_INITIALIZER_UNLOCKED;

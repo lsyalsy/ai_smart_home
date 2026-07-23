@@ -11,9 +11,9 @@
  * VCC -> 3.3V
  * GND -> GND
  */
-#define EC11_CLK_GPIO  38
-#define EC11_DT_GPIO   39
-#define EC11_SW_GPIO   40
+#define EC11_CLK_GPIO  39
+#define EC11_DT_GPIO   40
+#define EC11_SW_GPIO   13
 
 /**
  * @brief 初始化 EC11 旋转编码器 GPIO 与中断。

@@ -1,0 +1,3 @@
+idf_component_register(SRCS "http_server.c"
+                    INCLUDE_DIRS "include"
+                    REQUIRES api_routes esp_http_server esp_wifi esp_event esp_netif nvs_flash)

@@ -5,7 +5,7 @@
 
 #define MQ2_TAG            "MQ2"
 #define MQ2_ADC_UNIT       ADC_UNIT_1
-#define MQ2_ADC_CHANNEL    ADC_CHANNEL_1  /* GPIO2 on ESP32-S3 */
+#define MQ2_ADC_CHANNEL    ADC_CHANNEL_2  /* GPIO3 on ESP32-S3 (ADC1_CH2) */
 #define MQ2_ADC_ATTEN      ADC_ATTEN_DB_12
 #define MQ2_ADC_BITWIDTH   ADC_BITWIDTH_12
 #define MQ2_AVG_SAMPLES    4
@@ -30,7 +30,7 @@ void mq2_init(void)
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(s_adc_handle, MQ2_ADC_CHANNEL, &chan_config));
 
-    ESP_LOGI(MQ2_TAG, "MQ-2 initialized on ADC1 channel 1 (GPIO2)");
+    ESP_LOGI(MQ2_TAG, "MQ-2 initialized on ADC1 channel 2 (GPIO3)");
 }
 
 uint32_t mq2_read_raw(void)

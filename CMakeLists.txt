@@ -22,6 +22,8 @@ set(EXTRA_COMPONENT_DIRS
     components/ble
     components/audio/inmp441
     components/voice
-    components/rules/state)
+    components/rules/state
+    components/web/server
+    components/web/api)
 
 project(ai_smart_home)

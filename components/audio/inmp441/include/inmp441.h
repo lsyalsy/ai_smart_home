@@ -15,9 +15,9 @@ extern "C" {
  * DIN  (SD)  -> GPIO11
  * VDD -> 3.3V, GND -> GND, L/R -> GND (左声道)
  */
-#define INMP441_BCLK_GPIO   9
-#define INMP441_WS_GPIO     10
-#define INMP441_DIN_GPIO    11
+#define INMP441_BCLK_GPIO   16
+#define INMP441_WS_GPIO     15
+#define INMP441_DIN_GPIO    14
 
 /* 音频参数：16kHz 单声道 16bit
  * INMP441 本身是 24bit，但 16bit 已足够用于 VAD/ASR 前端

@@ -5,4 +5,5 @@ idf_component_register(SRCS "main.c"
                              hcsr501 bathroom_pir dht22 bh1750 mq2
                              ble
                              state notify
-                             inmp441 voice)
+                             inmp441 voice
+                             http_server)

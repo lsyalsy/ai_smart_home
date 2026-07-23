@@ -7,26 +7,65 @@ static const char *TAG = "MOTOR";
 
 /* LEDC 配置：使用低速模式，25kHz 可避免风扇啸叫 */
 #define MOTOR_LEDC_MODE         LEDC_LOW_SPEED_MODE
-#define MOTOR_LEDC_CHANNEL      LEDC_CHANNEL_0
 #define MOTOR_LEDC_TIMER        LEDC_TIMER_0
 #define MOTOR_LEDC_FREQ_HZ      25000
 #define MOTOR_LEDC_RESOLUTION   LEDC_TIMER_8_BIT
 #define MOTOR_LEDC_MAX_DUTY     255
 
-static uint8_t s_speed_level = 0;
-static uint8_t s_last_nonzero_level = MOTOR_SPEED_MAX_LEVEL;
+/* A 通道使用 LEDC_CHANNEL_0，B 通道使用 LEDC_CHANNEL_1 */
+#define MOTOR_LEDC_CH_A         LEDC_CHANNEL_0
+#define MOTOR_LEDC_CH_B         LEDC_CHANNEL_1
 
-void motor_init(void)
+/* 每个通道的运行时状态 */
+typedef struct {
+    uint8_t speed_level;
+    uint8_t last_nonzero_level;
+    int8_t  in1_gpio;
+    int8_t  in2_gpio;
+    ledc_channel_t ledc_ch;
+} motor_chan_state_t;
+
+static motor_chan_state_t s_chan[MOTOR_CHANNEL_MAX] = {
+    [MOTOR_CHANNEL_A] = {
+        .speed_level = 0,
+        .last_nonzero_level = MOTOR_SPEED_MAX_LEVEL,
+        .in1_gpio = MOTOR_AIN1_GPIO,
+        .in2_gpio = MOTOR_AIN2_GPIO,
+        .ledc_ch  = MOTOR_LEDC_CH_A,
+    },
+    [MOTOR_CHANNEL_B] = {
+        .speed_level = 0,
+        .last_nonzero_level = MOTOR_SPEED_MAX_LEVEL,
+        .in1_gpio = MOTOR_BIN1_GPIO,
+        .in2_gpio = MOTOR_BIN2_GPIO,
+        .ledc_ch  = MOTOR_LEDC_CH_B,
+    },
+};
+
+/* 配置方向控制 GPIO */
+static void motor_gpio_init(int8_t gpio)
 {
+    if (gpio < 0) return;
     gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << MOTOR_GPIO),
+        .pin_bit_mask = (1ULL << gpio),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
         .intr_type = GPIO_INTR_DISABLE,
     };
     gpio_config(&io_conf);
+}
 
+void motor_init(void)
+{
+    /* A 通道方向引脚 */
+    motor_gpio_init(MOTOR_AIN1_GPIO);
+    motor_gpio_init(MOTOR_AIN2_GPIO);
+    /* B 通道方向引脚 */
+    motor_gpio_init(MOTOR_BIN1_GPIO);
+    motor_gpio_init(MOTOR_BIN2_GPIO);
+
+    /* LEDC 定时器配置（A/B 共用同一定时器） */
     ledc_timer_config_t timer_conf = {
         .speed_mode       = MOTOR_LEDC_MODE,
         .duty_resolution  = MOTOR_LEDC_RESOLUTION,
@@ -36,80 +75,136 @@ void motor_init(void)
     };
     ESP_ERROR_CHECK(ledc_timer_config(&timer_conf));
 
-    ledc_channel_config_t ch_conf = {
-        .gpio_num       = MOTOR_GPIO,
-        .speed_mode     = MOTOR_LEDC_MODE,
-        .channel        = MOTOR_LEDC_CHANNEL,
-        .timer_sel      = MOTOR_LEDC_TIMER,
-        .duty           = 0,
-        .hpoint         = 0,
-        .intr_type      = LEDC_INTR_DISABLE,
+    /* A 通道 PWM */
+    ledc_channel_config_t ch_a = {
+        .gpio_num   = MOTOR_PWMA_GPIO,
+        .speed_mode = MOTOR_LEDC_MODE,
+        .channel    = MOTOR_LEDC_CH_A,
+        .timer_sel  = MOTOR_LEDC_TIMER,
+        .duty       = 0,
+        .hpoint     = 0,
+        .intr_type  = LEDC_INTR_DISABLE,
     };
-    ESP_ERROR_CHECK(ledc_channel_config(&ch_conf));
+    ESP_ERROR_CHECK(ledc_channel_config(&ch_a));
 
-    s_speed_level = 0;
-    s_last_nonzero_level = MOTOR_SPEED_MAX_LEVEL;
+    /* B 通道 PWM */
+    ledc_channel_config_t ch_b = {
+        .gpio_num   = MOTOR_PWMB_GPIO,
+        .speed_mode = MOTOR_LEDC_MODE,
+        .channel    = MOTOR_LEDC_CH_B,
+        .timer_sel  = MOTOR_LEDC_TIMER,
+        .duty       = 0,
+        .hpoint     = 0,
+        .intr_type  = LEDC_INTR_DISABLE,
+    };
+    ESP_ERROR_CHECK(ledc_channel_config(&ch_b));
 
-    ESP_LOGI(TAG, "motor PWM init ok: GPIO%d, %dHz, %d levels",
-             MOTOR_GPIO, MOTOR_LEDC_FREQ_HZ, MOTOR_SPEED_MAX_LEVEL);
+    /* 默认正转方向：AIN1=1, AIN2=0 */
+    gpio_set_level(MOTOR_AIN1_GPIO, 1);
+    gpio_set_level(MOTOR_AIN2_GPIO, 0);
+    gpio_set_level(MOTOR_BIN1_GPIO, 1);
+    gpio_set_level(MOTOR_BIN2_GPIO, 0);
+
+    ESP_LOGI(TAG, "TB6612 dual motor init: A(IN1=%d,IN2=%d,PWM=%d) B(IN1=%d,IN2=%d,PWM=%d)",
+             MOTOR_AIN1_GPIO, MOTOR_AIN2_GPIO, MOTOR_PWMA_GPIO,
+             MOTOR_BIN1_GPIO, MOTOR_BIN2_GPIO, MOTOR_PWMB_GPIO);
 }
 
 void motor_deinit(void)
 {
     motor_off();
-    ledc_stop(MOTOR_LEDC_MODE, MOTOR_LEDC_CHANNEL, 0);
+    motor_off_ch(MOTOR_CHANNEL_B);
+    ledc_stop(MOTOR_LEDC_MODE, MOTOR_LEDC_CH_A, 0);
+    ledc_stop(MOTOR_LEDC_MODE, MOTOR_LEDC_CH_B, 0);
 }
 
-void motor_set_speed(uint8_t level)
+void motor_set_speed_ch(motor_channel_t ch, uint8_t level)
 {
+    if (ch >= MOTOR_CHANNEL_MAX) return;
     if (level > MOTOR_SPEED_MAX_LEVEL) {
         level = MOTOR_SPEED_MAX_LEVEL;
     }
 
-    s_speed_level = level;
+    motor_chan_state_t *cs = &s_chan[ch];
+    cs->speed_level = level;
     if (level > 0) {
-        s_last_nonzero_level = level;
+        cs->last_nonzero_level = level;
     }
 
-    /* duty = level / 20 * 255，四舍五入 */
+    /* duty = level / 20 * 255 */
     uint32_t duty = ((uint32_t)level * MOTOR_LEDC_MAX_DUTY + MOTOR_SPEED_MAX_LEVEL / 2)
                     / MOTOR_SPEED_MAX_LEVEL;
 
-    ledc_set_duty(MOTOR_LEDC_MODE, MOTOR_LEDC_CHANNEL, duty);
-    ledc_update_duty(MOTOR_LEDC_MODE, MOTOR_LEDC_CHANNEL);
+    ledc_set_duty(MOTOR_LEDC_MODE, cs->ledc_ch, duty);
+    ledc_update_duty(MOTOR_LEDC_MODE, cs->ledc_ch);
 
-    ESP_LOGI(TAG, "set speed level=%u, duty=%lu/%d (%u%%)",
-             level, (unsigned long)duty, MOTOR_LEDC_MAX_DUTY,
+    ESP_LOGI(TAG, "ch%d set speed=%u, duty=%lu/%d (%u%%)",
+             ch, level, (unsigned long)duty, MOTOR_LEDC_MAX_DUTY,
              (unsigned int)level * MOTOR_SPEED_STEP_PERCENT);
+}
+
+void motor_set_speed(uint8_t level)
+{
+    motor_set_speed_ch(MOTOR_CHANNEL_A, level);
+}
+
+uint8_t motor_get_speed_ch(motor_channel_t ch)
+{
+    if (ch >= MOTOR_CHANNEL_MAX) return 0;
+    return s_chan[ch].speed_level;
 }
 
 uint8_t motor_get_speed(void)
 {
-    return s_speed_level;
+    return motor_get_speed_ch(MOTOR_CHANNEL_A);
+}
+
+void motor_on_ch(motor_channel_t ch)
+{
+    if (ch >= MOTOR_CHANNEL_MAX) return;
+    motor_chan_state_t *cs = &s_chan[ch];
+    if (cs->speed_level == 0) {
+        motor_set_speed_ch(ch, cs->last_nonzero_level > 0 ? cs->last_nonzero_level : MOTOR_SPEED_MAX_LEVEL);
+    }
 }
 
 void motor_on(void)
 {
-    if (s_speed_level == 0) {
-        motor_set_speed(s_last_nonzero_level > 0 ? s_last_nonzero_level : MOTOR_SPEED_MAX_LEVEL);
-    }
+    motor_on_ch(MOTOR_CHANNEL_A);
+}
+
+void motor_off_ch(motor_channel_t ch)
+{
+    motor_set_speed_ch(ch, 0);
 }
 
 void motor_off(void)
 {
-    motor_set_speed(0);
+    motor_off_ch(MOTOR_CHANNEL_A);
+}
+
+void motor_toggle_ch(motor_channel_t ch)
+{
+    if (ch >= MOTOR_CHANNEL_MAX) return;
+    if (s_chan[ch].speed_level > 0) {
+        motor_off_ch(ch);
+    } else {
+        motor_on_ch(ch);
+    }
 }
 
 void motor_toggle(void)
 {
-    if (s_speed_level > 0) {
-        motor_off();
-    } else {
-        motor_on();
-    }
+    motor_toggle_ch(MOTOR_CHANNEL_A);
+}
+
+bool motor_state_ch(motor_channel_t ch)
+{
+    if (ch >= MOTOR_CHANNEL_MAX) return false;
+    return s_chan[ch].speed_level > 0;
 }
 
 bool motor_state(void)
 {
-    return s_speed_level > 0;
+    return motor_state_ch(MOTOR_CHANNEL_A);
 }

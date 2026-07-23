@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 /* BH1750 I2C 总线引脚定义 */
-#define BH1750_I2C_SDA_GPIO     5
-#define BH1750_I2C_SCL_GPIO     6
+#define BH1750_I2C_SDA_GPIO     8
+#define BH1750_I2C_SCL_GPIO     9
 
 /* BH1750 I2C 设备地址 (ADDR 引脚接地) */
 #define BH1750_ADDR             0x23

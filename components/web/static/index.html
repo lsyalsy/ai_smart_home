@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI 智能管家控制面板</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 16px;
+    color: #333;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  }
+  h1 { font-size: 22px; text-align: center; margin-bottom: 4px; color: #2c3e50; }
+  .sub { text-align: center; font-size: 12px; color: #999; margin-bottom: 16px; }
+  h2 { font-size: 16px; color: #2c3e50; margin-bottom: 12px; border-left: 4px solid #667eea; padding-left: 8px; }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+  .row:last-child { border-bottom: none; }
+  .label { font-size: 14px; color: #555; }
+  .value { font-size: 14px; font-weight: 600; color: #2c3e50; }
+  .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+  .btn {
+    flex: 1; padding: 12px 0; font-size: 15px; border: none; border-radius: 10px;
+    color: #fff; cursor: pointer; transition: transform .1s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-on  { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .btn-off { background: linear-gradient(135deg, #eb3349, #f45c43); }
+  .btn-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+  .dot.on  { background: #38ef7d; box-shadow: 0 0 6px #38ef7d; }
+  .dot.off { background: #ccc; }
+  .dot.alarm { background: #f45c43; box-shadow: 0 0 6px #f45c43; }
+  .slider-container { margin-top: 10px; }
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  input[type=range] { flex: 1; height: 6px; -webkit-appearance: none; background: #e0e0e0; border-radius: 3px; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #667eea; cursor: pointer; }
+  .footer { text-align: center; color: rgba(255,255,255,.8); font-size: 12px; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>AI 智能管家</h1>
+    <div class="sub" id="ip-info">连接中...</div>
+
+    <div class="row"><span class="label">运行时长</span><span class="value" id="uptime">--</span></div>
+    <div class="row"><span class="label">内存剩余</span><span class="value" id="heap">--</span></div>
+  </div>
+
+  <div class="card">
+    <h2>传感器数据</h2>
+    <div class="row"><span class="label">温度</span><span class="value" id="temp">--</span></div>
+    <div class="row"><span class="label">湿度</span><span class="value" id="hum">--</span></div>
+    <div class="row"><span class="label">光照</span><span class="value" id="light">--</span></div>
+    <div class="row"><span class="label">人体检测</span><span class="value"><span id="pir-dot" class="dot off"></span><span id="pir">--</span></span></div>
+    <div class="row"><span class="label">卫生间</span><span class="value"><span id="bath-dot" class="dot off"></span><span id="bath">--</span></span></div>
+    <div class="row"><span class="label">烟雾浓度</span><span class="value" id="smoke">--</span></div>
+    <div class="row"><span class="label">烟雾报警</span><span class="value"><span id="alarm-dot" class="dot off"></span><span id="alarm">--</span></span></div>
+    <div class="row"><span class="label">心率</span><span class="value" id="hr">--</span></div>
+  </div>
+
+  <div class="card">
+    <h2>设备控制</h2>
+    <div class="row"><span class="label">灯光</span><span class="value"><span id="led-dot" class="dot off"></span><span id="led-txt">--</span></span></div>
+    <div class="btn-group">
+      <button class="btn btn-on" onclick="ctrl('led',1)">开灯</button>
+      <button class="btn btn-off" onclick="ctrl('led',0)">关灯</button>
+    </div>
+
+    <div class="row" style="margin-top:12px"><span class="label">风扇档位</span><span class="value" id="fan-val">--</span></div>
+    <div class="slider-container">
+      <div class="slider-row">
+        <input type="range" min="0" max="20" value="0" id="fan-slider" onchange="setFan(this.value)">
+        <span style="font-size:14px;font-weight:600;min-width:36px;text-align:right" id="fan-pct">0%</span>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px"><span class="label">加湿器</span><span class="value"><span id="hum-dot" class="dot off"></span><span id="hum-txt">--</span></span></div>
+    <div class="btn-group">
+      <button class="btn btn-on" onclick="ctrlRelay(0,1)">开启</button>
+      <button class="btn btn-off" onclick="ctrlRelay(0,0)">关闭</button>
+    </div>
+
+    <div class="row" style="margin-top:12px"><span class="label">换气扇</span><span class="value"><span id="bf-dot" class="dot off"></span><span id="bf-txt">--</span></span></div>
+    <div class="btn-group">
+      <button class="btn btn-on" onclick="ctrlRelay(1,1)">开启</button>
+      <button class="btn btn-off" onclick="ctrlRelay(1,0)">关闭</button>
+    </div>
+
+    <div class="row" style="margin-top:12px"><span class="label">蜂鸣器</span><span class="value"><span id="bz-dot" class="dot off"></span><span id="bz-txt">--</span></span></div>
+    <div class="btn-group">
+      <button class="btn btn-on" onclick="ctrl('buzzer',1)">响铃</button>
+      <button class="btn btn-off" onclick="ctrl('buzzer',0)">静音</button>
+    </div>
+  </div>
+
+  <div class="footer">ESP32-S3 · AI Smart Home · Powered by ESP-IDF</div>
+
+<script>
+function refresh() {
+  fetch('/api/status').then(r => r.json()).then(d => {
+    document.getElementById('temp').textContent = d.temperature.toFixed(1) + ' C';
+    document.getElementById('hum').textContent = d.humidity.toFixed(1) + ' %';
+    document.getElementById('light').textContent = d.light + ' lux';
+    document.getElementById('hr').textContent = d.heart_rate + ' bpm';
+    document.getElementById('smoke').textContent = d.smoke_raw + ' / 4095';
+
+    setDot('pir-dot', d.human_present);
+    document.getElementById('pir').textContent = d.human_present ? '有人' : '无人';
+    setDot('bath-dot', d.bathroom_pir);
+    document.getElementById('bath').textContent = d.bathroom_pir ? '有人' : '无人';
+    setDot('alarm-dot', d.smoke_alarm);
+    document.getElementById('alarm').textContent = d.smoke_alarm ? '报警' : '正常';
+
+    setDot('led-dot', d.led_on);
+    document.getElementById('led-txt').textContent = d.led_on ? '开' : '关';
+    document.getElementById('fan-val').textContent = d.fan_speed + ' / 20';
+    document.getElementById('fan-slider').value = d.fan_speed;
+    document.getElementById('fan-pct').textContent = (d.fan_speed * 5) + '%';
+    setDot('hum-dot', d.humidifier_on);
+    document.getElementById('hum-txt').textContent = d.humidifier_on ? '开' : '关';
+    setDot('bf-dot', d.bathroom_fan_on);
+    document.getElementById('bf-txt').textContent = d.bathroom_fan_on ? '开' : '关';
+    setDot('bz-dot', d.buzzer_on);
+    document.getElementById('bz-txt').textContent = d.buzzer_on ? '响' : '静';
+
+    document.getElementById('uptime').textContent = d.uptime + ' s';
+    document.getElementById('heap').textContent = d.free_heap + ' B';
+  }).catch(() => {});
+}
+
+function setDot(id, on) {
+  var el = document.getElementById(id);
+  el.className = 'dot ' + (on ? 'on' : 'off');
+}
+
+function ctrl(type, on) {
+  fetch('/api/' + type + '?on=' + on).then(() => refresh());
+}
+function setFan(level) {
+  fetch('/api/fan?level=' + level).then(() => refresh());
+}
+function ctrlRelay(ch, on) {
+  fetch('/api/relay?ch=' + ch + '&on=' + on).then(() => refresh());
+}
+
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>

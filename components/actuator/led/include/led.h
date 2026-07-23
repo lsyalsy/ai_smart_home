@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
-/* 项目设计：LED 灯光接 GPIO15 */
-#define LED_GPIO 15
+/* 面包板方案：灯光通过继电器 IN3 (GPIO1) 控制 */
+#define LED_GPIO 1
 
 void led_init(void);
 void led_on(void);

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 /* 项目设计：蜂鸣器接 GPIO8 */
-#define BUZZER_GPIO 8
+#define BUZZER_GPIO 0
 
 void buzzer_init(void);
 void buzzer_on(void);

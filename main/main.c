@@ -39,11 +39,12 @@
 #include "notify.h"
 
 #include "voice.h"
+#include "http_server.h"
 
 #define TAG "APP"
 
 /* ========== 引脚与定时常量 ========== */
-#define BTN_PAGE_GPIO       37   /* 页面切换按键 */
+#define BTN_PAGE_GPIO       38   /* 页面切换按键（面包板方案，原 GPIO37 被 PSRAM 占用） */
 #define BTN_PRESS_LEVEL     0
 #define BTN_DEBOUNCE_MS     200
 
@@ -578,6 +579,11 @@ void app_main(void)
 
     /* 创建 FreeRTOS 任务 */
     app_tasks_create();
+
+    /* 启动 Web 服务器（WiFi + HTTP，独立任务） */
+    if (!http_server_start()) {
+        ESP_LOGW(TAG, "Web server failed to start, continuing without it");
+    }
 
     ESP_LOGI(TAG, "All tasks created, app_main done.");
 }

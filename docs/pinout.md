@@ -1,45 +1,55 @@
-# AI 智能管家硬件接线说明
+# AI 智能管家硬件接线说明（面包板方案）
 
-## 1. 1.8 寸 TFT 显示屏（ST7735，软件 SPI）
+> 更新日期：2026-07-23
+> 方案：面包板搭建，TB6612 双通道电机驱动，移除 WS2812B 灯带和功能按键
+
+## 1. TFT 显示屏（SPI）
 
 | TFT 引脚 | ESP32-S3 引脚 | 说明 |
 |---------|--------------|------|
-| VCC     | 3.3V         | 电源 |
+| VDD     | 3.3V         | 电源 |
 | GND     | GND          | 地 |
-| SCL/SCK | GPIO1        | 时钟 |
-| SDA/MOSI| GPIO7        | 数据 |
-| CS      | GPIO20       | 片选 |
+| SCL/SCK | GPIO12       | 时钟 |
+| SDA/MOSI| GPIO11       | 数据 |
+| CS      | GPIO45       | 片选 |
 | DC/RS   | GPIO21       | 数据/命令 |
-| RST     | GPIO47       | 复位 |
-| BL      | 3.3V         | 背光常亮 |
+| RES     | GPIO47       | 复位 |
+| BL      | GPIO46       | 背光 |
 
 ## 2. 传感器
 
 | 传感器 | 信号 | ESP32-S3 引脚 | 说明 |
 |-------|------|--------------|------|
-| DHT22 | DATA | GPIO3        | 单总线温湿度 |
-| BH1750| SDA  | GPIO5        | I2C 光照 |
-| BH1750| SCL  | GPIO6        | I2C 光照 |
-| HC-SR501| OUT| GPIO4        | 人体红外 |
-| MQ-2  | AO   | GPIO2        | 烟雾 ADC |
+| DHT22 | DATA | GPIO4        | 单总线温湿度 |
+| BH1750| SDA  | GPIO8        | I2C 光照 |
+| BH1750| SCL  | GPIO9        | I2C 光照 |
+| HC-SR501| OUT| GPIO5        | 人体红外 |
+| MQ-2  | AO   | GPIO3        | 烟雾 ADC (ADC1_CH2) |
+| 浴室 PIR| OUT| GPIO5        | 与 HC-SR501 共用（需确认分时复用或分引脚） |
 
 ## 3. 执行器
 
 | 设备 | ESP32-S3 引脚 | 说明 |
 |-----|--------------|------|
-| LED | GPIO15       | 灯光 |
-| 蜂鸣器 | GPIO8     | 蜂鸣器 |
-| 风扇电机 | GPIO16  | 风扇 |
-| 加湿器继电器 | GPIO17 | 继电器 |
+| LED 灯光 | GPIO1       | 通过继电器 IN3 控制 |
+| 蜂鸣器 | GPIO0        | 有源蜂鸣器模块 |
+| 风扇电机 A (PWMA) | GPIO10 | TB6612 A 通道 PWM |
+| 风扇电机 A (AIN1) | GPIO7  | TB6612 A 通道方向 |
+| 风扇电机 A (AIN2) | GPIO6  | TB6612 A 通道方向 |
+| 风扇电机 B (PWMB) | GPIO48 | TB6612 B 通道 PWM |
+| 风扇电机 B (BIN1) | GPIO41 | TB6612 B 通道方向 |
+| 风扇电机 B (BIN2) | GPIO42 | TB6612 B 通道方向 |
+| 加湿器继电器 | GPIO17 | 继电器 IN1 |
+| 换气扇继电器 | GPIO18 | 继电器 IN2 |
 
 ## 4. 输入设备
 
 | 设备 | ESP32-S3 引脚 | 说明 |
 |-----|--------------|------|
-| EC11 CLK (A相) | GPIO38 | 编码器旋转 |
-| EC11 DT  (B相) | GPIO39 | 编码器旋转 |
-| EC11 SW  (按键) | GPIO40 | 编码器按键 |
-| 页面按键 | GPIO37 | 备用页面切换按键 |
+| EC11 A 相 (CLK) | GPIO39 | 编码器旋转 |
+| EC11 B 相 (DT)  | GPIO40 | 编码器旋转 |
+| EC11 按键 (SW)  | GPIO13 | 编码器按键（开关机） |
+| 页面切换按键 | GPIO38 | 备用页面切换按键 |
 
 ## 5. INMP441 I2S 数字麦克风
 
@@ -47,14 +57,19 @@
 |-------------|--------------|------|
 | VDD         | 3.3V         | 电源（1.8V ~ 3.3V） |
 | GND         | GND          | 地 |
-| SCK / BCLK  | GPIO9        | I2S 位时钟 |
-| WS / LRCK   | GPIO10       | I2S 字选择 |
-| SD / DIN    | GPIO11       | I2S 数据输入 |
+| SCK / BCLK  | GPIO16       | I2S 位时钟 |
+| WS / LRCK   | GPIO15       | I2S 字选择 |
+| SD / DIN    | GPIO14       | I2S 数据输入 |
 | L/R         | GND          | 接 GND 选择左声道 |
-
-> 软件配置：16kHz 采样率、16bit、飞利浦标准 I2S 格式、单声道（左声道）。
-> INMP441 支持 24bit 输出，但本项目读取 16bit 已足够用于 VAD 与后续 ASR 前端。
 
 ## 6. BLE 心率
 
 通过 ESP32-S3 内置蓝牙连接广播心率服务 `0x180D` 的设备，无需额外 GPIO。
+
+## 7. 移除的组件
+
+| 组件 | 原引脚 | 状态 |
+|------|--------|------|
+| WS2812B 灯带 | GPIO48 | 已移除，GPIO48 改为 TB6612 PWMB |
+| 功能按键 1 | GPIO41 | 已移除，GPIO41 改为 TB6612 BIN1 |
+| 功能按键 2 | GPIO42 | 已移除，GPIO42 改为 TB6612 BIN2 |
