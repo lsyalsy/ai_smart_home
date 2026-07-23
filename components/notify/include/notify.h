@@ -4,12 +4,12 @@
 #include <stdbool.h>
 
 /**
- * @brief 初始化微信推送（Server酱）。
+ * @brief 初始化微信推送（PushPlus）。
  *
- * @param server_chan_key Server酱 SendKey，为空则禁用推送。
- * @return true 初始化成功，false 无有效 key
+ * @param pushplus_token PushPlus token，为空则禁用推送。
+ * @return true 初始化成功，false 无有效 token
  */
-bool notify_init(const char *server_chan_key);
+bool notify_init(const char *pushplus_token);
 
 /**
  * @brief 发送一条微信推送消息。

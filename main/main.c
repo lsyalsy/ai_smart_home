@@ -143,8 +143,8 @@ static void app_hardware_init(void)
     hcsr501_init();
     bathroom_pir_init();
 
-    /* 微信推送（Server酱），key 可在 menuconfig 或代码里配置 */
-    notify_init("");
+    /* 微信推送（PushPlus） */
+    notify_init("eb439e7c5c7c49bba2714d8936f0e949");
 
     dht22_init();
     bh1750_init();
