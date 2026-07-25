@@ -40,8 +40,14 @@
 
 #include "voice.h"
 #include "http_server.h"
+#include "chat.h"
 
 #define TAG "APP"
+
+/* 大模型 API 配置 - 实际使用时应通过 menuconfig 配置 */
+#define LLM_API_KEY    "YOUR_API_KEY"        // 替换为你的 API Key
+#define LLM_BASE_URL   "https://api.doubao.com/v1"  // 替换为你的 API Base URL
+#define LLM_MODEL_NAME "Doubao-lite"         // 替换为你的模型名称
 
 /* ========== 引脚与定时常量 ========== */
 #define BTN_PAGE_GPIO       38   /* 页面切换按键（面包板方案，原 GPIO37 被 PSRAM 占用） */
@@ -584,6 +590,9 @@ void app_main(void)
     if (!http_server_start()) {
         ESP_LOGW(TAG, "Web server failed to start, continuing without it");
     }
+
+    /* 初始化大模型客户端 */
+    chat_init(LLM_API_KEY, LLM_BASE_URL, LLM_MODEL_NAME, 15000);
 
     ESP_LOGI(TAG, "All tasks created, app_main done.");
 }

@@ -36,6 +36,7 @@
   .btn-on  { background: linear-gradient(135deg, #11998e, #38ef7d); }
   .btn-off { background: linear-gradient(135deg, #eb3349, #f45c43); }
   .btn-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .btn-chat { background: linear-gradient(135deg, #667eea, #764ba2); }
   .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
   .dot.on  { background: #38ef7d; box-shadow: 0 0 6px #38ef7d; }
   .dot.off { background: #ccc; }
@@ -103,6 +104,17 @@
     </div>
   </div>
 
+  <div class="card">
+    <h2>AI 智能助手</h2>
+    <div id="chat-history" style="height:220px;overflow-y:auto;margin-bottom:10px;padding:10px;background:#f8f9fa;border-radius:8px;font-size:14px;line-height:1.5;">
+      <div style="color:#666;text-align:center;">欢迎使用 AI 智能助手，有什么可以帮您？</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="chat-input" placeholder="输入消息..." style="flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:24px;font-size:14px;outline:none;" onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="btn btn-chat" onclick="sendChat()" style="padding:10px 20px;border-radius:24px;">发送</button>
+    </div>
+  </div>
+
   <div class="footer">ESP32-S3 · AI Smart Home · Powered by ESP-IDF</div>
 
 <script>
@@ -155,6 +167,53 @@ function ctrlRelay(ch, on) {
 
 refresh();
 setInterval(refresh, 2000);
+
+/* ========== 聊天功能 ========== */
+function addChatMsg(text, isUser) {
+  var history = document.getElementById('chat-history');
+  var div = document.createElement('div');
+  div.style.marginBottom = '8px';
+  div.style.padding = '6px 10px';
+  div.style.borderRadius = '8px';
+  if (isUser) {
+    div.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+    div.style.color = '#fff';
+    div.style.textAlign = 'right';
+    div.style.marginLeft = '40px';
+  } else {
+    div.style.background = '#fff';
+    div.style.color = '#333';
+    div.style.textAlign = 'left';
+    div.style.marginRight = '40px';
+    div.style.border = '1px solid #e0e0e0';
+  }
+  div.textContent = text;
+  history.appendChild(div);
+  history.scrollTop = history.scrollHeight;
+}
+
+function sendChat() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+  
+  addChatMsg(text, true);
+  input.value = '';
+  
+  fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: text })
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      addChatMsg(d.response, false);
+    } else {
+      addChatMsg('错误: ' + d.error, false);
+    }
+  }).catch(() => {
+    addChatMsg('网络错误，请重试', false);
+  });
+}
 </script>
 </body>
 </html>

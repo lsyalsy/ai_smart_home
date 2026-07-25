@@ -33,4 +33,12 @@ esp_err_t api_handle_relay(httpd_req_t *req);
  */
 esp_err_t api_handle_buzzer(httpd_req_t *req);
 
+/**
+ * @brief POST /api/chat - 大模型聊天接口
+ * 
+ * 请求体: {"message": "用户消息"}
+ * 响应: {"success": true, "response": "AI回复"} 或 {"success": false, "error": "错误信息"}
+ */
+esp_err_t api_handle_chat(httpd_req_t *req);
+
 #endif /* __API_ROUTES_H */

@@ -191,6 +191,11 @@ bool http_server_start(void)
     };
     httpd_register_uri_handler(s_server, &uri_buzzer);
 
+    httpd_uri_t uri_chat = {
+        .uri = "/api/chat", .method = HTTP_POST, .handler = api_handle_chat,
+    };
+    httpd_register_uri_handler(s_server, &uri_chat);
+
     ESP_LOGI(TAG, "HTTP server started on port 80");
     return true;
 }

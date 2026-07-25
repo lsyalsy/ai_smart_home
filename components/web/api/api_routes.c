@@ -12,6 +12,7 @@
 #include "hcsr501.h"
 #include "bathroom_pir.h"
 #include "mq2.h"
+#include "chat.h"
 
 /* 需要访问全局状态，通过 extern 声明 */
 #include "ui.h"
@@ -185,6 +186,73 @@ esp_err_t api_handle_buzzer(httpd_req_t *req)
     const char *json_str = cJSON_PrintUnformatted(resp);
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req, json_str, strlen(json_str));
+    cJSON_free((void *)json_str);
+    cJSON_Delete(resp);
+    return ESP_OK;
+}
+
+/* ---------- POST /api/chat - 大模型聊天 ---------- */
+esp_err_t api_handle_chat(httpd_req_t *req)
+{
+    /* 读取请求体（循环读取直到完成） */
+    char buf[512] = {0};
+    int total_len = 0;
+    int ret;
+    
+    while ((ret = httpd_req_recv(req, buf + total_len, sizeof(buf) - 1 - total_len)) > 0) {
+        total_len += ret;
+        if (total_len >= sizeof(buf) - 1) break;
+    }
+    
+    if (ret <= 0 && total_len == 0) {
+        ESP_LOGE(TAG, "读取请求体失败: %d", ret);
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "读取请求体失败");
+        return ESP_FAIL;
+    }
+    
+    buf[total_len] = '\0';
+    
+    /* 解析 JSON */
+    cJSON *root = cJSON_Parse(buf);
+    if (!root) {
+        ESP_LOGE(TAG, "JSON 解析失败");
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "JSON 格式错误");
+        return ESP_FAIL;
+    }
+    
+    cJSON *msg_obj = cJSON_GetObjectItem(root, "message");
+    if (!msg_obj || !cJSON_IsString(msg_obj)) {
+        ESP_LOGE(TAG, "缺少 message 字段");
+        cJSON_Delete(root);
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "缺少 message 字段");
+        return ESP_FAIL;
+    }
+    
+    const char *message = msg_obj->valuestring;
+    ESP_LOGI(TAG, "聊天消息: %s", message);
+    
+    cJSON_Delete(root);
+    
+    /* 调用大模型 */
+    char response[2048] = {0};
+    chat_error_t err = chat_send_message(message, response, sizeof(response));
+    
+    /* 构建响应 */
+    cJSON *resp = cJSON_CreateObject();
+    if (err == CHAT_OK) {
+        cJSON_AddBoolToObject(resp, "success", true);
+        cJSON_AddStringToObject(resp, "response", response);
+    } else {
+        cJSON_AddBoolToObject(resp, "success", false);
+        cJSON_AddStringToObject(resp, "error", chat_get_error_string(err));
+        ESP_LOGE(TAG, "大模型调用失败: %s", chat_get_error_string(err));
+    }
+    
+    const char *json_str = cJSON_PrintUnformatted(resp);
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    httpd_resp_send(req, json_str, strlen(json_str));
+    
     cJSON_free((void *)json_str);
     cJSON_Delete(resp);
     return ESP_OK;

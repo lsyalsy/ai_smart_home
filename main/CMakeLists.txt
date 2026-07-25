@@ -6,4 +6,4 @@ idf_component_register(SRCS "main.c"
                              ble
                              state notify
                              inmp441 voice
-                             http_server)
+                             http_server chat)
